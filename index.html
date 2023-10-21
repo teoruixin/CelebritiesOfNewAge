@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        #example_chart {
+            margin: 20px;
+            border: 1px solid slateblue;
+        }
+    </style>
 </head>
+
 <body>
-    
+
+    <div id="example_chart">
+    </div>
+
+    <!-- Import D3. -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <!-- Import Vue. -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Import Charts. 
+        Please create charts in external files eg. example_chart.js, and 
+        import them using <script></script> tags. This way, the charts can be 
+        easily moved from page to page with minimal edits.
+    -->
+    <script type="module" src="example_chart.js"></script>
 </body>
+    <!--
+        Run server.cmd in the terminal to start the python server. 
+        (Make sure the directory is the same as the repo)
+    -->
 </html>
