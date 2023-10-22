@@ -1,0 +1,151 @@
+<html>
+  <meta charset="utf-8" />
+  <head>
+    <title>Top 20 YouTubers by Average Earnings</title>
+    <style>
+      h1 {
+        font-size: 20px;
+        font-family: 'Times New Roman';
+        text-align: center;
+      }
+
+      svg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        /* border: 1px solid black; */
+      }
+
+      svg text {
+        font-size: 11px;
+        font-family: sans-serif;
+        text-anchor: middle;
+        fill: black;
+      }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h1>Top 20 YouTubers by Average Earnings</h1>
+    <svg class="chart"></svg>
+    <script>
+      var chartWidth = 1000;
+      var chartHeight = 500; // Increased chart height to fit 20 bars
+
+      /******** Data ********/
+      var allData;
+
+      /******** Load Data ********/
+      var index = 0;
+      d3.csv("Global YouTube Statistics.csv", (row, i) => {
+        return {
+          youtuber: row.Youtuber,
+          averageEarning: (+row.highest_monthly_earnings + +row.lowest_monthly_earnings) / 2
+        };
+      }).then(rows => {
+        // Sort the data by averageEarning in descending order
+        rows.sort((a, b) => b.averageEarning - a.averageEarning);
+
+        // Select the top 20 YouTubers
+        rows = rows.slice(0, 20);
+
+        allData = rows;
+        makeChart(rows);
+      }).catch(error => {
+        console.log(error);
+      });
+
+      /******** Scales ********/
+      var x, y;
+
+      /******** Axes ********/
+      var xAxis;
+      var yAxis;
+
+      /******** Make Chart ********/
+      function makeChart(data) {
+        // x position
+        x = d3.scaleLinear()
+          .domain([0, d3.max(data, function (d) { return d.averageEarning; })])
+          .nice()
+          .range([200, chartWidth - 30]);
+
+        // y position
+        y = d3.scaleBand()
+          .domain(data.map(d => d.youtuber))
+          .range([20, chartHeight - 25])
+          .padding(0.2);
+
+        var canvas = d3.select(".chart")
+          .style("width", chartWidth)
+          .style("height", chartHeight)
+          .attr("transform", "translate(0," + -10 + ")");
+
+        var bars = d3.select(".chart").selectAll("rect")
+          .data(data);
+
+        // ENTER
+        var enter = bars.enter().append("rect")
+          .attr("fill", "steelblue")
+          .attr("x", 200)
+          .attr("y", (d) => y(d.youtuber))
+          .attr("width", (d) => x(d.averageEarning) - 200)
+          .attr("height", y.bandwidth());
+
+        // ENTER + UPDATE
+        enter.merge(bars)
+          .attr("x", 200)
+          .attr("y", (d) => y(d.youtuber))
+          .attr("width", (d) => x(d.averageEarning) - 200)
+          .attr("height", y.bandwidth());
+
+        xAxis = d3.axisBottom()
+          .scale(x);
+
+        yAxis = d3.axisLeft()
+          .scale(y);
+
+        var yAxisGroup = canvas.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(200,0)")
+          .call(yAxis);
+
+        yAxisGroup.selectAll("text")
+          .attr("transform", "translate(-5,0")
+          .style("text-anchor", "end");
+
+        yAxisGroup.append("text")
+          .text("YouTuber")
+          .attr("y", 17)
+          .attr("dx", -10)
+          .style("text-anchor", "end")
+          .style("font-weight", "bold");
+
+        canvas.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0," + (chartHeight - 25) + ")")
+          .call(xAxis)
+          .append("text")
+          .text("Average Earnings")
+          .attr("x", chartWidth - 30)
+          .attr("dy", -5)
+          .style("text-anchor", "end")
+          .style("fill", "black")
+          .style("font-weight", "bold");
+
+        // Add count labels to the bars
+        canvas.selectAll(".count-label")
+          .data(data)
+          .enter()
+          .append("text")
+          .attr("class", "count-label")
+          .attr("x", (d) => x(d.averageEarning) + 5)
+          .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5)
+          .text((d) => d.averageEarning)
+          .style("font-size", "12px")
+          .style("fill", "black")
+          .style("text-anchor", "start");
+      }
+    </script>
+  </body>
+</html>
