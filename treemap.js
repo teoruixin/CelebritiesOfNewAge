@@ -114,7 +114,7 @@ var enter = graph
           return "Country: " + d.data.country + "\n" +
                  "Youtuber count: " + d.value + "\n" 
       });
-      
+
 // and to add the text labels
 graph
   .selectAll("text")
@@ -123,7 +123,7 @@ graph
   .append("text")
     .attr("x", d => (d.x0+5))  // +10 to adjust position (more right)
     .attr("y", d => (d.y0+20))    // +20 to adjust position (lower)
-    .text(d => d.data.country)
+    .text(d=>d.value > 10 ? d.data.country : "")
     .attr("font-size", "15px")
     .attr("fill", "white")
 
