@@ -95,5 +95,5 @@ graph
     .attr("font-size", "15px")
     .attr("fill", "white")
 
-// Append the graph element to the element with id "example_chart".
+// Append the graph element to the element with id "treemap".
 treemap.append(graph.node());
