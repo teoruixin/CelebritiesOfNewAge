@@ -7,7 +7,7 @@
     <title>Document</title>
 
     <style>
-        #example_chart {
+        #example_chart, #boxplot {
             margin: 20px;
             border: 1px solid slateblue;
         }
@@ -16,16 +16,29 @@
             margin: 20px;
             border: 1px solid slateblue;
         }
+
+        #treemapCat {
+            margin: 20px;
+            border: 1px solid slateblue;
+        }
     </style>
 </head>
 
 <body>
 
-    <div id="example_chart">
-    </div>
+    <div id="example_chart"></div>
 
     <h1>Total Number of Top YouTubers per Country </h1>
     <div id="treemap"></div>
+
+
+    <h1>Total Number of Top YouTubers per Category </h1>
+    <div id="treemapCat"></div>
+
+    <h1>Number of Top Youtubers, by category and year of channel creation</h1>
+    <div id="category_by_year"></div>
+
+    <h1>Views (Log) by Category (2018 vs 2022)</h1>
     <div id="boxplot"></div>
 
     <!-- Import D3. -->
@@ -39,8 +52,11 @@
         import them using <script></script> tags. This way, the charts can be 
         easily moved from page to page with minimal edits.
     -->
-    <script type="module" src="example_chart.js"></script>
-    <script type="module" src="treemap.js"></script>
+
+    <script type="module" src="js/example_chart.js"></script>
+    <script type="module" src="js/cat_by_year.js"></script>
+    <script type="module" src="js/treemap.js"></script>
+    <script type="module" src="js/treemapCat.js"></script>
     <script type="module" src="boxplot.js"></script>
     
 </body>

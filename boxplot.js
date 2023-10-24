@@ -1,10 +1,3 @@
-// Treemap for total count of YouTubers per country 
-
-// Import data into the "youtube" object.
-// const trendingUS = await d3.csv("data/awc_early/US.csv");
-
-// Make chart.
-
 // Declare the chart dimensions and margins.
 const chartWidth = 1000;
 const chartHeight = 400;
@@ -22,9 +15,6 @@ function updateChart() {
     getLateData(country, month)
 }
 
-// getEarlyData("US", 5)
-// getLateData("US", 5)
-
 function getEarlyData(country, month){
     d3.csv("data/awc_early/" + country + ".csv", (row, i) => {
         return {
@@ -38,7 +28,6 @@ function getEarlyData(country, month){
             key: i
         };
     }).then(rows => {
-        // rows.sort(function(a,b) { return b.views - a.views; })
         rows = rows.filter(function(d) { return d.month == month && d.year == 18; })
         rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
         rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
@@ -63,7 +52,6 @@ function getLateData(country, month){
             key: i
         };
     }).then(rows => {
-        // rows.sort(function(a,b) { return b.views - a.views; })
         rows = rows.filter(function(d) { return d.month == month && d.year == 2022; })
         rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
         rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
@@ -174,7 +162,7 @@ function makeChart(data, country, month, year, period){
         .paddingInner(1)
         .paddingOuter(.5)
 
-    xAxis = d3.axisBottom().scale(x).ticks(0)
+    var xAxis = d3.axisBottom().scale(x).ticks(0)
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .attr("class", "xaxis")

@@ -70,8 +70,19 @@ let parentArray = treemap.descendants().filter(d => d.depth == 1)
 //     return parentArray.find(d => d.data.country == category)
 // }
 
+//tooltip
+var tooltip = d3.select("#treemap")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+
 // use this information to add rectangles:
-graph
+var enter = graph
   .selectAll("rect")
   .data(parentArray)
   .enter()
@@ -82,6 +93,27 @@ graph
     .attr('height', d => (d.y1 - d.y0))
     .style("stroke", "black")
     .style("fill", color)
+ .on("mouseover", function(event, d){ 
+        d3.select(this).transition()
+            .attr("stroke-width", "3px")
+          tooltip.transition()
+            .duration(100)
+            .style("opacity", 1);
+      })
+      .on("mouseout", function(event, d){ 
+        d3.select(this).transition()
+          .attr("stroke-width", "1px")  
+          tooltip.transition()
+            .duration('200')
+            .style("opacity", 0);
+      });
+  
+    // Add a title to the point (on mouseover)
+    enter.append("#treemap:title")
+      .text(function(d){ 
+          return "Country: " + d.data.country + "\n" +
+                 "Youtuber count: " + d.value + "\n" 
+      });
 
 // and to add the text labels
 graph
@@ -91,9 +123,9 @@ graph
   .append("text")
     .attr("x", d => (d.x0+5))  // +10 to adjust position (more right)
     .attr("y", d => (d.y0+20))    // +20 to adjust position (lower)
-    .text(d => d.data.country + " - " + d.value)
+    .text(d=>d.value > 10 ? d.data.country : "")
     .attr("font-size", "15px")
     .attr("fill", "white")
 
-// Append the graph element to the element with id "example_chart".
+// Append the graph element to the element with id "treemap".
 treemap.append(graph.node());
