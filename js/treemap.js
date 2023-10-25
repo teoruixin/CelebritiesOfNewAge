@@ -126,6 +126,3 @@ graph
     .text(d=>d.value > 10 ? d.data.country : "")
     .attr("font-size", "15px")
     .attr("fill", "white")
-
-// Append the graph element to the element with id "treemap".
-treemap.append(graph.node());
