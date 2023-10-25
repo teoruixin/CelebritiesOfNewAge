@@ -2,7 +2,7 @@
 <html>
   <meta charset="utf-8" />
   <head>
-    <title>Top 8 Categories and the Top 3 YouTubers by Subscribers</title>
+    <title>Top 8 Categories and the Top 5 YouTubers by Subscribers</title>
     <style>
       h1 {
         font-size: 20px;
@@ -56,14 +56,14 @@
     <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
   </head>
   <body>
-    <h1>Top 8 Categories and the Top 3 YouTubers by Subscribers</h1>
+    <h1>Top 8 Categories and the Top 5 YouTubers by Subscribers</h1>
     <svg class="chart"></svg>
     <div class="legend-container">
       <div class="legend"></div>
     </div>
     <script>
       var chartWidth = 900;
-      var chartHeight = 400;
+      var chartHeight = 700;
 
       // Define colors for each category
       var categoryColors = d3.scaleOrdinal(d3.schemeCategory10);
@@ -119,13 +119,13 @@
           .attr("class", "legend-text")
           .text((d) => d[0]);
         
-        // Extract the top 3 YouTubers for each of the top categories
+        // Extract the top 5 YouTubers for each of the top categories
         var topYoutubers = [];
         topCategories.forEach(([category, totalSubscribers, color]) => {
           var categoryYoutubers = groupedData.get(category);
           categoryYoutubers.sort((a, b) => b.subscribers - a.subscribers);
           categoryYoutubers.forEach(youtuber => youtuber.color = color);
-          topYoutubers.push(...categoryYoutubers.slice(0, 3)); // Show top 3 YouTubers in each category
+          topYoutubers.push(...categoryYoutubers.slice(0, 5)); // Show top 5 YouTubers in each category
         });
         
         allData = topYoutubers;
