@@ -7,7 +7,7 @@
     <title>Document</title>
 
     <style>
-        #example_chart, #boxplot, #treemap, #treemapCat {
+        #category_by_year, #boxplot, #treemap, #treemapCat, #trending_by_count, #trending_by_views {
             margin: 20px;
             border: 1px solid slateblue;
         }
@@ -16,11 +16,15 @@
 
 <body>
 
-    <div id="example_chart"></div>
+    <h1>Trending Videos (Count)</h1>
+    <div id="trending_by_count"></div>
+
+    <h1>Trending Videos (Views)</h1>
+    <div id="trending_by_views"></div>
 
     <h1>Total Number of Top YouTubers per Country </h1>
     <div id="treemap"></div>
-    
+
     <h1>Total Number of Top YouTubers per Category </h1>
     <div id="treemapCat"></div>
 
@@ -42,7 +46,7 @@
         easily moved from page to page with minimal edits.
     -->
 
-    <script type="module" src="js/example_chart.js"></script>
+    <script type="module" src="js/trending_by_var.js"></script>
     <script type="module" src="js/cat_by_year.js"></script>
     <script type="module" src="js/treemap.js"></script>
     <script type="module" src="js/treemapCat.js"></script>

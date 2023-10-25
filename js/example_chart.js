@@ -29,7 +29,7 @@ const graph = d3.create("svg")
 // Declare the x scale. 
 const xscale = d3.scaleLinear()
     .domain([2004, 2023])                       // domain is the size of the data
-    .range([marginLeft, width-marginRight]);    // range is the size of the scale
+    .range([marginLeft, width - marginRight]);    // range is the size of the scale
 
 // Declare the y scale. 
 const yscale = d3.scaleLinear()
@@ -39,8 +39,8 @@ const yscale = d3.scaleLinear()
 // Declare any other scales.
 // This one maps Category to a colour.
 const colour = d3.scaleOrdinal()
-  .domain(youtube.map(d => d.category))
-  .range(d3.schemeTableau10)
+    .domain(youtube.map(d => d.category))
+    .range(d3.schemeTableau10)
 
 // Add the x-axis.
 graph.append("g")
@@ -65,7 +65,7 @@ const helpme = graph
     .attr('cx', d => xscale(d.created_year))
     .attr('cy', d => yscale(d.subscribers))
     .attr('fill', d => colour(d.category));
-    // // .attr('r', d => size(d.pop));
+// // .attr('r', d => size(d.pop));
 
 // Append the graph element to the element with id "example_chart".
 example_chart.append(graph.node());
