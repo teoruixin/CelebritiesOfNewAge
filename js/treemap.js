@@ -15,7 +15,7 @@ const marginLeft = 30;
 
 // console.log(youtube)
 // Get unique countries
-const countries = [...new Set(youtube.map(d => d.Country))]
+const countries = [...new Set(youtube.map(d => d.Country))].filter(d => d != "nan")
 // console.log(countries)
 
 // Count of youtubers per country
@@ -77,9 +77,33 @@ var tooltip = d3.select("#treemap")
     .attr("class", "tooltip")
     .style("background-color", "white")
     .style("border", "solid")
-    .style("border-width", "1px")
+    .style("border-width", "2px")
     .style("border-radius", "5px")
     .style("padding", "5px")
+    .style("position", "absolute")
+
+// Three function that change the tooltip when user hover / move / leave a cell
+const mouseover = function(event,d) {
+  tooltip
+    .style("opacity", 1)
+  d3.select(this)
+    .style("stroke", "black")
+    .style("stroke-width", 2)
+    .style("opacity", 1)
+}
+const mousemove = function(event,d) {
+  tooltip
+    .html("<strong>" + "Country: " + "</strong>" + d.data.country + "<br>" +
+          "<strong>" + "Youtuber count: " + "</strong>" + d.value)
+    .style("left", event.x+10 + "px")
+    .style("top", event.y+10 + "px")
+}
+const mouseleave = function(event,d) {
+  tooltip
+    .style("opacity", 0)
+  d3.select(this)
+    .style("stroke", "none")
+}
 
 // use this information to add rectangles:
 var enter = graph
@@ -93,36 +117,30 @@ var enter = graph
     .attr('height', d => (d.y1 - d.y0))
     .style("stroke", "black")
     .style("fill", color)
- .on("mouseover", function(event, d){ 
-        d3.select(this).transition()
-            .attr("stroke-width", "3px")
-          tooltip.transition()
-            .duration(100)
-            .style("opacity", 1);
-      })
-      .on("mouseout", function(event, d){ 
-        d3.select(this).transition()
-          .attr("stroke-width", "1px")  
-          tooltip.transition()
-            .duration('200')
-            .style("opacity", 0);
-      });
+  .on("mouseover", mouseover)
+  .on("mousemove", mousemove)
+  .on("mouseleave", mouseleave)
   
-    // Add a title to the point (on mouseover)
-    enter.append("#treemap:title")
-      .text(function(d){ 
-          return "Country: " + d.data.country + "\n" +
-                 "Youtuber count: " + d.value + "\n" 
-      });
-
 // and to add the text labels
 graph
   .selectAll("text")
   .data(parentArray)
   .enter()
   .append("text")
+  .selectAll('tspan')
+      .data(d => {
+          return d.value > 10 ? d.data.country.split(/(?=[A-Z][^A-Z])/g) // split the name of movie
+              .map(v => {
+                  return {
+                      text: v,
+                      x0: d.x0,                        // keep x0 reference
+                      y0: d.y0                         // keep y0 reference
+                  }
+              }): ""})
+  .enter()
+  .append('tspan')
     .attr("x", d => (d.x0+5))  // +10 to adjust position (more right)
-    .attr("y", d => (d.y0+20))    // +20 to adjust position (lower)
-    .text(d=>d.value > 10 ? d.data.country : "")
+    .attr("y", (d,i) => (d.y0+20+(i*15)))    // +20 to adjust position (lower)
+    .text(d=>d.text)
     .attr("font-size", "15px")
     .attr("fill", "white")
