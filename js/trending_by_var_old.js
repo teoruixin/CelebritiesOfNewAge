@@ -14,55 +14,15 @@ await d3.csv("data/trending_summary/CA_summary.csv", (row, i) => {
     // filter out category "29" (can't find any information on it)
     data = data.filter(row => row.category !== "29");
 
-    // Dataset is actually two datasets, from 2017-2018 and 2020 to 2023.
-    // We need to know the % of dates in set 1 and % of dates in set 2.
-    const split_date = Date.parse("2019-01-01");
-
-    var pre_split = data.filter(row => row.date <= split_date);
-    var pre_split_dates = [];
-    for (var record of pre_split) {
-        if (pre_split_dates.includes(record["date"])) { continue; }
-        pre_split_dates.push(record["date"]);
-    }
-    const pre_split_max = Math.max(...pre_split_dates);
-
-    var post_split = data.filter(row => row.date > split_date);
-    var post_split_dates = [];
-    for (var record of post_split) {
-        if (post_split_dates.includes(record["date"])) { continue; }
-        post_split_dates.push(record["date"]);
-    }
-    const post_split_min = Math.min(...post_split_dates);
-
-    // console.log("pre_split_n: ", pre_split_dates)
-    // console.log("pre_split_max: ", pre_split_max)
-
-    // console.log("post_split_n: ", post_split_dates)
-    // console.log("post_split_min: ", post_split_min)
-
-    const pre_split_len = pre_split_dates.length;
-    const post_split_len = post_split_dates.length;
-    const total_len = pre_split_len + post_split_len;
-    const pre_split_perc = pre_split_len / total_len;
-    const post_split_perc = post_split_len / total_len;
-
-    // Pass the info to the functions. Used for domain calculation.
-    const split_info = {
-        pre_split_perc: pre_split_perc,
-        post_split_perc: post_split_perc,
-        pre_split_max: pre_split_max,
-        post_split_min: post_split_min
-    }
-
     // Generate graph
-    fn_trending_by_count(data, split_info);
-    fn_trending_by_views(data, split_info);
+    fn_trending_by_count(data);
+    fn_trending_by_views(data);
 
 }).catch(error => {
     console.log(error);
 });
 
-function fn_trending_by_count(data, split_info) {
+function fn_trending_by_count(data) {
     // Make chart.
 
     // Declare the chart dimensions and margins.
@@ -73,32 +33,15 @@ function fn_trending_by_count(data, split_info) {
     const marginBottom = 30;
     const marginLeft = 80;
 
-    // Split info
-    const blank_perc = 0.10;
-    const filled_width = width * (1-blank_perc);
-    const pre_split_last_px = split_info.pre_split_perc * filled_width;
-    const post_split_first_px = width - (split_info.post_split_perc * filled_width);
-    console.log(pre_split_last_px, post_split_first_px)
-
     // Create the SVG container, here named "graph". Specify size in width and height above ^
     var graph = d3.create("svg")
         .attr("width", width)
         .attr("height", height);
 
     // Declare the x scale. 
-    const xscale = d3.scaleUtc() // .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)]).range([marginLeft, width - marginRight]);
-        .domain([
-            d3.min(data, d => d.date), 
-            split_info.pre_split_max, 
-            split_info.post_split_min,
-            d3.max(data, d => d.date)
-        ])
-        .range([
-            marginLeft, 
-            pre_split_last_px, 
-            post_split_first_px, 
-            width - marginRight
-        ]);
+    const xscale = d3.scaleUtc()
+        .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)])
+        .range([marginLeft, width - marginRight]);
 
     // Declare the y scale. 
     const yscale = d3.scaleLinear()
@@ -163,7 +106,7 @@ function fn_trending_by_count(data, split_info) {
     trending_by_count.append(graph.node());
 }
 
-function fn_trending_by_views(data, split_info) {
+function fn_trending_by_views(data) {
     // Make chart.
 
     // Declare the chart dimensions and margins.
@@ -174,32 +117,15 @@ function fn_trending_by_views(data, split_info) {
     const marginBottom = 30;
     const marginLeft = 80;
 
-    // Split info
-    const blank_perc = 0.10;
-    const filled_width = width * (1-blank_perc);
-    const pre_split_last_px = split_info.pre_split_perc * filled_width;
-    const post_split_first_px = width - (split_info.post_split_perc * filled_width);
-    console.log(pre_split_last_px, post_split_first_px)
-
     // Create the SVG container, here named "graph". Specify size in width and height above ^
     var graph = d3.create("svg")
         .attr("width", width)
         .attr("height", height);
 
     // Declare the x scale. 
-    const xscale = d3.scaleUtc() // .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)]).range([marginLeft, width - marginRight]);
-        .domain([
-            d3.min(data, d => d.date), 
-            split_info.pre_split_max, 
-            split_info.post_split_min,
-            d3.max(data, d => d.date)
-        ])
-        .range([
-            marginLeft, 
-            pre_split_last_px, 
-            post_split_first_px, 
-            width - marginRight
-        ]);
+    const xscale = d3.scaleUtc()
+        .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)])
+        .range([marginLeft, width - marginRight]);
 
     // Declare the y scale. 
     const yscale = d3.scaleLinear()
