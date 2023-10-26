@@ -75,10 +75,13 @@ function fn_trending_by_count(data, split_info) {
 
     // Split info
     const blank_perc = 0.10;
-    const filled_width = width * (1-blank_perc);
-    const pre_split_last_px = split_info.pre_split_perc * filled_width;
-    const post_split_first_px = width - (split_info.post_split_perc * filled_width);
-    console.log(pre_split_last_px, post_split_first_px)
+
+    const filled_width = (width - marginRight - marginLeft) * (1-blank_perc);
+    const pre_split_last_px = (split_info.pre_split_perc * filled_width) + marginLeft;
+    const post_split_first_px = width - marginRight - (split_info.post_split_perc * filled_width);
+    // console.log(pre_split_last_px, post_split_first_px);
+    // console.log("diff:", post_split_first_px - pre_split_last_px);
+    // console.log("blank:", blank_perc * (width - marginRight - marginLeft))
 
     // Create the SVG container, here named "graph". Specify size in width and height above ^
     var graph = d3.create("svg")
@@ -176,10 +179,13 @@ function fn_trending_by_views(data, split_info) {
 
     // Split info
     const blank_perc = 0.10;
-    const filled_width = width * (1-blank_perc);
-    const pre_split_last_px = split_info.pre_split_perc * filled_width;
-    const post_split_first_px = width - (split_info.post_split_perc * filled_width);
-    console.log(pre_split_last_px, post_split_first_px)
+    
+    const filled_width = (width - marginRight - marginLeft) * (1-blank_perc);
+    const pre_split_last_px = (split_info.pre_split_perc * filled_width) + marginLeft;
+    const post_split_first_px = width - marginRight - (split_info.post_split_perc * filled_width);
+    // console.log(pre_split_last_px, post_split_first_px);
+    // console.log("diff:", post_split_first_px - pre_split_last_px);
+    // console.log("blank:", blank_perc * (width - marginRight - marginLeft))
 
     // Create the SVG container, here named "graph". Specify size in width and height above ^
     var graph = d3.create("svg")
