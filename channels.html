@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #div_id,
+        #div_id2 {
+            margin: 20px;
+            border: 1px solid slateblue;
+        }
+    </style>
+</head>
+
+<body id="channels">
+    {{ criteria }}
+    <button v-on:click="top_channels_update()">donttestme</button>
+    <h1>Top 5 Countries and the Top 5 YouTubers by Subscribers</h1>
+    <div id="top_youtubers_div">
+        <!-- <svg class="chart"></svg> -->
+    </div>
+    <div class="legend-container">
+        <div class="legend"></div>
+    </div>
+
+    <h1>Total Number of Top YouTubers per Country </h1>
+    <div id="treemap_countries"></div>
+
+    <h1>Total Number of Top YouTubers per Category </h1>
+    <div id="treemap_categories"></div>
+
+    <!-- Script importing -->
+
+    <!-- Import D3. -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <!-- Import Vue. -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Import Charts. -->
+    <!-- <script type="module" src="js/top_channels.js"></script> -->
+    <!-- <script type="module" src="js/treemap.js"></script> -->
+    <!-- <script type="module" src="js/treemapCat.js"></script> -->
+    <script src="js/channels.js"></script>
+
+</body>
+<!--
+        Run server.cmd in the terminal to start the python server. 
+        (Make sure the directory is the same as the repo)
+    -->
+
+</html>

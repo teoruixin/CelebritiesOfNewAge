@@ -74,7 +74,7 @@
 
       /******** Load Data ********/
       var index = 0;
-      d3.csv("Global YouTube Statistics.csv", (row, i) => {
+      d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
         return {
           youtuber: row.Youtuber,
           subscribers: +row.subscribers,
@@ -157,8 +157,8 @@
           .padding(0.2);
 
         var canvas = d3.select(".chart")
-          .style("width", chartWidth)
-          .style("height", chartHeight)
+          .attr("width", chartWidth)
+          .attr("height", chartHeight)
           .attr("transform", "translate(0," + -10 + ")");
 
         var bars = d3.select(".chart").selectAll("rect")
