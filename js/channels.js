@@ -145,6 +145,8 @@ const app = Vue.createApp({
             const marginLeft = 100;
 
             var data_temp = this.data.filter(row => this.criteria.country.indexOf(row.country) >= 0);
+            
+            data_temp = data_temp.sort((a, b) => b.subscribers - a.subscribers);
             console.log(data_temp);
 
             var x = d3.scaleLinear()
@@ -159,17 +161,35 @@ const app = Vue.createApp({
 
             // .data(dataDynamic.filter(d => d.year === year), d => d.country)
             this.barChart.selectAll('rect')
-                .data(data_temp, d => d.country)
+                .data(data_temp, d => d.youtuber)
                 .join(
                     enter => enter.append('rect')
                         .attr("x", marginLeft)
+                        .attr("y", height - marginBottom) // (d) => y(d.youtuber))
+                        .attr("width", (d) => x(d.subscribers) - marginLeft)
+                        .attr("height", y.bandwidth())
+                        .attr("fill", (d) => d.color)
+                        .attr("opacity", 0)
+                        
+          .transition()
+          .duration(750)
+          .attr("y", (d) => y(d.youtuber))
+          .attr('opacity', 1),
+
+                    update => update
+                        .transition()
+                        .duration(750)
+                        // .attr("x", marginLeft)
                         .attr("y", (d) => y(d.youtuber))
                         .attr("width", (d) => x(d.subscribers) - marginLeft)
                         .attr("height", y.bandwidth()),
 
-                    update => update,
-
-                    exit => exit.remove()
+                    exit => exit
+                    .transition()
+                    .duration(750)
+                    .attr("y", height - marginBottom) // (d) => y(d.youtuber))
+                    .attr('opacity', 0)
+                    .remove()
                 )
         },
 
