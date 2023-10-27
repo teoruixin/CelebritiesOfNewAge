@@ -16,15 +16,14 @@
 </head>
 
 <body id="channels">
-    {{ criteria }}
+    {{ criteria }} <br/>
     <button v-on:click="top_channels_update()">donttestme</button>
+    <button v-on:click="generate_legend()">generate lg</button>
+    <button v-on:click="update_legend()">upd leg</button>
     <h1>Top 5 Countries and the Top 5 YouTubers by Subscribers</h1>
-    <div id="top_youtubers_div">
-        <!-- <svg class="chart"></svg> -->
-    </div>
-    <div class="legend-container">
-        <div class="legend"></div>
-    </div>
+    <div id="top_youtubers_div"></div>
+    <div class="legend"></div>
+
 
     <h1>Total Number of Top YouTubers per Country </h1>
     <div id="treemap_countries"></div>

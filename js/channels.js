@@ -5,13 +5,14 @@ const app = Vue.createApp({
         return {
             data: [],               // Stores all data
             data_top: [],           // Stores top youtuber data
-            countryColors: null,
-            criteria: {
+            legend_data: [],        // Stores all country => colour mapping
+            legend_data_top: [],    // Stores country => colour mapping for countries in data_top
+            criteria: {             // Stores filter criteria
                 country: [],
                 category: [],
             },
-            barChart: null,
-            barChart_dim: {
+            barChart: null,         // Stores the bar chart object
+            barChart_dim: {         // Stores dimensions of bar chart 
                 width: 1080,
                 height: 400,
                 marginTop: 20,
@@ -19,7 +20,7 @@ const app = Vue.createApp({
                 marginBottom: 30,
                 marginLeft: 100
             },
-            treemap_dim: {
+            treemap_dim: {          // Stores dimensions of treemap
                 width: 800,
                 height: 400,
                 marginTop: 30,
@@ -30,6 +31,69 @@ const app = Vue.createApp({
         }
     }, // /data
     methods: {
+        top_channels_filter() {
+            // Define number of channels to display
+            const top_n = 20;
+            const hasCountryCrit = this.criteria.country.length > 0;
+            const hasCategoryCrit = this.criteria.category.length > 0;
+
+            this.data_top = this.data;
+
+            if (hasCountryCrit) {
+                this.data_top = this.data_top.filter(row => this.criteria.country.indexOf(row.country) >= 0);
+            }
+            if (hasCategoryCrit) {
+                this.data_top = this.data_top.filter(row => this.criteria.category.indexOf(row.category) >= 0);
+            }
+
+            this.data_top = this.data_top.slice(0, top_n);
+
+            return;
+        }, // top_channels_filter
+
+        generate_legend() {
+            // Update legend data:
+            // Get countries that appear in the top 20
+            var countries = [];
+            for (var row of this.data_top) {
+                if (countries.indexOf(row.country) == -1) {
+                    countries.push(row.country);
+                }
+            }
+
+            // Generate legend data for top 20 countries
+            this.legend_data_top = this.legend_data.filter(entry => countries.indexOf(entry[0]) != -1)
+
+            // // Display the legend
+            var legend = d3.select(".legend")
+                .selectAll(".legend-entry")
+                .data(this.legend_data_top, d => d[0])
+                .enter()
+                .append("div")
+                .attr("class", "legend-entry");
+
+            legend.append("svg")
+                .attr("width", 15)
+                .attr("height", 10)
+                .attr("class", "legend-color")
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", (d) => d[2]);
+
+            legend.append("span")
+                .attr("class", "legend-text")
+                .text((d) => d[0]);
+        }, // generate_legend
+
+        update_legend() {
+            // brute force
+            d3.select(".legend").selectAll(".legend-entry").remove();
+            this.generate_legend();
+        }, // update_legend
+
         top_channels_create(data) {
             // Declare the chart dimensions and margins.
             const width = this.barChart_dim.width;
@@ -39,13 +103,13 @@ const app = Vue.createApp({
             const marginBottom = this.barChart_dim.marginBottom;
             const marginLeft = this.barChart_dim.marginLeft;
 
-            // x position
+            // Declare x scale
             var x = d3.scaleLinear()
                 .domain([0, d3.max(data, function (d) { return d.subscribers; })])
                 .nice()
                 .range([marginLeft, width - marginRight]);
 
-            // y position
+            // Declare y scale
             var y = d3.scaleBand()
                 .domain(data.map(d => d.youtuber))
                 .range([marginTop, height - marginBottom])
@@ -129,7 +193,7 @@ const app = Vue.createApp({
 
             // Save graph to Vue
             this.barChart = graph;
-        }, // /top_channels_create
+        }, // top_channels_create
 
         top_channels_update() {
             // Declare chart dimensions.
@@ -141,18 +205,20 @@ const app = Vue.createApp({
             const marginLeft = this.barChart_dim.marginLeft;
 
             // New data for updating the chart.
-            var data_temp = this.data.filter(row => this.criteria.country.indexOf(row.country) >= 0);
-            data_temp = data_temp.sort((a, b) => b.subscribers - a.subscribers);
+            this.top_channels_filter();
+
+            // Update legend.
+            this.update_legend();
 
             // Declare x scale
             var x = d3.scaleLinear()
-                .domain([0, d3.max(data_temp, function (d) { return d.subscribers; })])
+                .domain([0, d3.max(this.data_top, function (d) { return d.subscribers; })])
                 .nice()
                 .range([marginLeft, width - marginRight]);
 
             // Declare y scale
             var y = d3.scaleBand()
-                .domain(data_temp.map(d => d.youtuber))
+                .domain(this.data_top.map(d => d.youtuber))
                 .range([marginTop, height - marginBottom])
                 .padding(0.2);
 
@@ -160,7 +226,7 @@ const app = Vue.createApp({
             this.barChart               // this.barChart is an svg (cf. variable "graph" in create)
                 .selectAll('rect')
                 // declare data, key
-                .data(data_temp, d => d.youtuber)
+                .data(this.data_top, d => d.youtuber)
                 .join(
                     // enter: new data
                     enter => enter.append('rect')
@@ -224,22 +290,30 @@ const app = Vue.createApp({
         }, // treemap_countYoutubers
 
         treemap_onClick(event, d) {
+            // Check which treemap was clicked (country/category). 
+            // Then check if clicked country/category is in criteria. 
+            // If yes, remove. If no, add. 
+            // Then update Top Youtubers graph.
             if ("country" in d.data) {
                 var tgtIndex = this.criteria.country.indexOf(d.data.country);
                 if (tgtIndex >= 0) {
                     this.criteria.country.splice(tgtIndex, 1);
+                    this.top_channels_update();
                     return;
                 }
                 this.criteria.country.push(d.data.country);
+                this.top_channels_update();
                 return;
             }
             if ("category" in d.data) {
                 var tgtIndex = this.criteria.category.indexOf(d.data.category);
                 if (tgtIndex >= 0) {
                     this.criteria.category.splice(tgtIndex, 1);
+                    this.top_channels_update();
                     return;
                 }
                 this.criteria.category.push(d.data.category);
+                this.top_channels_update();
                 return;
             }
         }, // treemap_onclick(event, d)
@@ -475,10 +549,10 @@ const app = Vue.createApp({
                 .attr("font-size", "15px")
                 .attr("fill", "white")
         }, // treemap_categories_create
-    }, // /methods
+    }, // methods
 
     mounted() {
-        this.countryColors = d3.scaleOrdinal(d3.schemeCategory10);
+        var countryColors = d3.scaleOrdinal(d3.schemeCategory10);
 
         d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
             return {
@@ -491,9 +565,10 @@ const app = Vue.createApp({
             // Filter out "nan" country
             rows = rows.filter(row => row.country && row.country.toLowerCase() !== "nan");
 
-            // Record data
-            this.data = rows;
+            // Sort rows
+            rows = rows.sort((a, b) => b.subscribers - a.subscribers);
 
+            // Add colours for country
             // Group data by country
             var groupedData = d3.group(rows, d => d.country);
 
@@ -506,43 +581,32 @@ const app = Vue.createApp({
 
             // Sort countries by total subscribers in descending order
             var topCountries = Array.from(countrySubscribers)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5); // Select the top 5 countries
+                .sort((a, b) => b[1] - a[1]);
 
-            // Assign colors to the top countries
+            // Assign colors to countries
             topCountries.forEach((country, i) => {
                 country[1] = i;
-                country[2] = this.countryColors(i);
+                country[2] = countryColors(i);
             });
 
-            // Display the legend
-            var legend = d3.select(".legend").selectAll(".legend-entry")
-                .data(topCountries)
-                .enter()
-                .append("div")
-                .attr("class", "legend-entry");
+            this.legend_data = topCountries;
+            var countryColorsDict = Object.assign({}, ...topCountries.map((x) => ({ [x[0]]: x[2] })));
+            // {"USA": "#000000", India: "#01FF01", ...}
 
-            legend.append("div")
-                .attr("class", "legend-color")
-                .style("background-color", (d) => d[2]);
+            // Add colour to rows based on country
+            rows.forEach(youtuber => youtuber.color = countryColorsDict[youtuber.country]);
 
-            legend.append("div")
-                .attr("class", "legend-text")
-                .text((d) => d[0]);
+            // Record data
+            this.data = rows;
 
-            // Extract the top 5 YouTubers for each of the top countries
-            var topYoutubers = [];
-            topCountries.forEach(([country, totalSubscribers, color]) => {
-                var countryYoutubers = groupedData.get(country);
-                countryYoutubers.sort((a, b) => b.subscribers - a.subscribers);
-                countryYoutubers.forEach(youtuber => youtuber.color = color);
-                topYoutubers.push(...countryYoutubers.slice(0, 5));
-            });
+            // Filter to top 20
+            this.top_channels_filter();
 
-            this.data_top = topYoutubers;
+            // Plot graphs
             this.top_channels_create(this.data_top);
-            this.treemap_countries_create(rows);
-            this.treemap_categories_create(rows);
+            this.generate_legend();
+            this.treemap_countries_create(this.data);
+            this.treemap_categories_create(this.data);
         }).catch(error => {
             console.log(error);
         });
