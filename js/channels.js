@@ -140,39 +140,45 @@ const app = Vue.createApp({
             const marginBottom = this.barChart_dim.marginBottom;
             const marginLeft = this.barChart_dim.marginLeft;
 
+            // New data for updating the chart.
             var data_temp = this.data.filter(row => this.criteria.country.indexOf(row.country) >= 0);
-
             data_temp = data_temp.sort((a, b) => b.subscribers - a.subscribers);
-            console.log(data_temp);
 
+            // Declare x scale
             var x = d3.scaleLinear()
                 .domain([0, d3.max(data_temp, function (d) { return d.subscribers; })])
                 .nice()
                 .range([marginLeft, width - marginRight]);
 
+            // Declare y scale
             var y = d3.scaleBand()
                 .domain(data_temp.map(d => d.youtuber))
                 .range([marginTop, height - marginBottom])
                 .padding(0.2);
 
-            // .data(dataDynamic.filter(d => d.year === year), d => d.country)
-            this.barChart.selectAll('rect')
+            // Update bar chart
+            this.barChart               // this.barChart is an svg (cf. variable "graph" in create)
+                .selectAll('rect')
+                // declare data, key
                 .data(data_temp, d => d.youtuber)
                 .join(
+                    // enter: new data
                     enter => enter.append('rect')
+                        // declare initial position
                         .attr("x", marginLeft)
                         .attr("y", height - marginBottom) // (d) => y(d.youtuber))
                         .attr("width", (d) => x(d.subscribers) - marginLeft)
                         .attr("height", y.bandwidth())
                         .attr("fill", (d) => d.color)
                         .attr("opacity", 0)
-
+                        // transition to final position
                         .transition()
                         .duration(750)
                         .attr("y", (d) => y(d.youtuber))
                         .attr('opacity', 1),
 
                     update => update
+                        // Declare transition to final position
                         .transition()
                         .duration(750)
                         // .attr("x", marginLeft)
@@ -181,10 +187,12 @@ const app = Vue.createApp({
                         .attr("height", y.bandwidth()),
 
                     exit => exit
+                        // Declare transition to final position
                         .transition()
                         .duration(750)
                         .attr("y", height - marginBottom) // (d) => y(d.youtuber))
                         .attr('opacity', 0)
+                        // then remove().
                         .remove()
                 )
         }, // top_channels_update
