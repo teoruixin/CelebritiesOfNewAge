@@ -11,38 +11,33 @@ const app = Vue.createApp({
                 category: [],
             },
             barChart: null,
+            barChart_dim: {
+                width: 1080,
+                height: 400,
+                marginTop: 20,
+                marginRight: 20,
+                marginBottom: 30,
+                marginLeft: 100
+            },
+            treemap_dim: {
+                width: 800,
+                height: 400,
+                marginTop: 30,
+                marginRight: 30,
+                marginBottom: 30,
+                marginLeft: 30
+            }
         }
     }, // /data
     methods: {
-        treemap_onClick(event, d) {
-            if ("country" in d.data) {
-                var tgtIndex = this.criteria.country.indexOf(d.data.country);
-                if (tgtIndex >= 0) {
-                    this.criteria.country.splice(tgtIndex, 1);
-                    return;
-                }
-                this.criteria.country.push(d.data.country);
-                return;
-            }
-            if ("category" in d.data) {
-                var tgtIndex = this.criteria.category.indexOf(d.data.category);
-                if (tgtIndex >= 0) {
-                    this.criteria.category.splice(tgtIndex, 1);
-                    return;
-                }
-                this.criteria.category.push(d.data.category);
-                return;
-            }
-        },
         top_channels_create(data) {
-
             // Declare the chart dimensions and margins.
-            const width = 1080;
-            const height = 400;
-            const marginTop = 20;
-            const marginRight = 20;
-            const marginBottom = 30;
-            const marginLeft = 100;
+            const width = this.barChart_dim.width;
+            const height = this.barChart_dim.height;
+            const marginTop = this.barChart_dim.marginTop;
+            const marginRight = this.barChart_dim.marginRight;
+            const marginBottom = this.barChart_dim.marginBottom;
+            const marginLeft = this.barChart_dim.marginLeft;
 
             // x position
             var x = d3.scaleLinear()
@@ -137,15 +132,16 @@ const app = Vue.createApp({
         }, // /top_channels_create
 
         top_channels_update() {
-            const width = 1080;
-            const height = 400;
-            const marginTop = 20;
-            const marginRight = 20;
-            const marginBottom = 30;
-            const marginLeft = 100;
+            // Declare chart dimensions.
+            const width = this.barChart_dim.width;
+            const height = this.barChart_dim.height;
+            const marginTop = this.barChart_dim.marginTop;
+            const marginRight = this.barChart_dim.marginRight;
+            const marginBottom = this.barChart_dim.marginBottom;
+            const marginLeft = this.barChart_dim.marginLeft;
 
             var data_temp = this.data.filter(row => this.criteria.country.indexOf(row.country) >= 0);
-            
+
             data_temp = data_temp.sort((a, b) => b.subscribers - a.subscribers);
             console.log(data_temp);
 
@@ -170,11 +166,11 @@ const app = Vue.createApp({
                         .attr("height", y.bandwidth())
                         .attr("fill", (d) => d.color)
                         .attr("opacity", 0)
-                        
-          .transition()
-          .duration(750)
-          .attr("y", (d) => y(d.youtuber))
-          .attr('opacity', 1),
+
+                        .transition()
+                        .duration(750)
+                        .attr("y", (d) => y(d.youtuber))
+                        .attr('opacity', 1),
 
                     update => update
                         .transition()
@@ -185,15 +181,17 @@ const app = Vue.createApp({
                         .attr("height", y.bandwidth()),
 
                     exit => exit
-                    .transition()
-                    .duration(750)
-                    .attr("y", height - marginBottom) // (d) => y(d.youtuber))
-                    .attr('opacity', 0)
-                    .remove()
+                        .transition()
+                        .duration(750)
+                        .attr("y", height - marginBottom) // (d) => y(d.youtuber))
+                        .attr('opacity', 0)
+                        .remove()
                 )
-        },
+        }, // top_channels_update
 
         treemap_countYoutubers(data, target) {
+            // Helper function used to count number of Youtubers in target (country, category)
+            // Output: [{country: India, value: 168}, {country: Brazil, value: 90}, ...] (or category)
             var youtuberCount = {};
             for (var row of data) {
                 if (row[target] == "nan") {
@@ -217,14 +215,35 @@ const app = Vue.createApp({
             return output;
         }, // treemap_countYoutubers
 
+        treemap_onClick(event, d) {
+            if ("country" in d.data) {
+                var tgtIndex = this.criteria.country.indexOf(d.data.country);
+                if (tgtIndex >= 0) {
+                    this.criteria.country.splice(tgtIndex, 1);
+                    return;
+                }
+                this.criteria.country.push(d.data.country);
+                return;
+            }
+            if ("category" in d.data) {
+                var tgtIndex = this.criteria.category.indexOf(d.data.category);
+                if (tgtIndex >= 0) {
+                    this.criteria.category.splice(tgtIndex, 1);
+                    return;
+                }
+                this.criteria.category.push(d.data.category);
+                return;
+            }
+        }, // treemap_onclick(event, d)
+
         treemap_countries_create(input_data) {
             // Declare the chart dimensions and margins.
-            const width = 800;
-            const height = 400;
-            const marginTop = 30;
-            const marginRight = 30;
-            const marginBottom = 30;
-            const marginLeft = 30;
+            const width = this.treemap_dim.width;
+            const height = this.treemap_dim.height;
+            const marginTop = this.treemap_dim.marginTop;
+            const marginRight = this.treemap_dim.marginRight;
+            const marginBottom = this.treemap_dim.marginBottom;
+            const marginLeft = this.treemap_dim.marginLeft;
 
             var countriesYoutubers = this.treemap_countYoutubers(input_data, "country")
 
@@ -335,12 +354,12 @@ const app = Vue.createApp({
 
         treemap_categories_create(input_data) {
             // Declare the chart dimensions and margins.
-            const width = 800;
-            const height = 400;
-            const marginTop = 30;
-            const marginRight = 30;
-            const marginBottom = 30;
-            const marginLeft = 30;
+            const width = this.treemap_dim.width;
+            const height = this.treemap_dim.height;
+            const marginTop = this.treemap_dim.marginTop;
+            const marginRight = this.treemap_dim.marginRight;
+            const marginBottom = this.treemap_dim.marginBottom;
+            const marginLeft = this.treemap_dim.marginLeft;
 
             var categoriesYoutubers = this.treemap_countYoutubers(input_data, "category")
 
@@ -449,6 +468,7 @@ const app = Vue.createApp({
                 .attr("fill", "white")
         }, // treemap_categories_create
     }, // /methods
+
     mounted() {
         this.countryColors = d3.scaleOrdinal(d3.schemeCategory10);
 
