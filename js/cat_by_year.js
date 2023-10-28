@@ -48,8 +48,8 @@ function cat_by_created_year(data) {
     // Make chart.
 
     // Declare the chart dimensions and margins.
-    const width = 640;
-    const height = 400;
+    const width = 1000;
+    const height = 500;
     const marginTop = 20;
     const marginRight = 20;
     const marginBottom = 30;
@@ -120,6 +120,34 @@ function cat_by_created_year(data) {
             .style("stroke-width", 1.5)
             .attr("d", lineGenerator(catData.data))
     }
+
+    // Add a legend
+    const legend = graph.append("g")
+        .attr("transform", `translate(${width - 130}, 10)`);
+
+    // Create a legend title
+    legend.append("text")
+        .text("Categories")
+        .attr("dy", "0.35em")
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px");
+
+    // Create legend items
+    const categories = Array.from(new Set(data.map(d => d.category)));
+    categories.forEach((category, index) => {
+        const legendItem = legend.append("g")
+            .attr("transform", `translate(0, ${index * 13 + 20})`);
+
+        legendItem.append("circle")
+            .attr("r", 3.5)
+            .attr("fill", colour(category));
+
+        legendItem.append("text")
+            .text(category)
+            .attr("x", 10)
+            .attr("dy", "0.32em")
+            .attr("font-size", "12px");
+    });
 
     // Append the graph element to the element with id "example_chart".
     category_by_year.append(graph.node());
