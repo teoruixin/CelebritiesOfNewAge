@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <div id="nav" class="container m-3">
+        <h1>Top YouTube Content Creators Analysis</h1>
+        <div class="nav-button">
+            <a href="channels.html" class="btn btn-outline-danger">Channels</a>
+            <a href="videos.html" class="btn btn-outline-danger">Videos</a>
+        </div>
+    
+    <div id="desc" class="container m-3">
+        <h2>Unearthing YouTube's Explosive Rise</h2>
+        <p>The COVID-19 pandemic, which swept across the globe in 2020, reshaped numerous 
+            aspects of our lives, from the way we work and socialise, to the way we access 
+            and consume information and entertainment. As people around the world found themselves 
+            confined to their homes, many turned to online platforms not only as sources of 
+            diversion but also as creative outlets and means of connectivity. Content creation has 
+            now become one of the biggest industries, building the careers of many famous influencers 
+            and celebrities. The rise in unemployment during the pandemic has led to people turning 
+            towards content creation to support their lifestyles.<br><br>
+
+            One of the largest and first few platforms for content creation is YouTube, a platform widely
+            used amongst all age groups worldwide. Many have turned to YouTube for content creation. We 
+            delve into the phenomenon of YouTube’s meteoric rise, and seek to understand and analyse how 
+            global content creators from the most subscribed YouTube channels achieve their success. 
+        </p>
+    </div>
+
+    <div id="catChanges" class="container m-3">
+        <h2>A Historical Look at YouTube's Category Shifts</h2>
+        <p>Back when YouTube was founded, most of the top YouTubers were from the "Entertainment" and
+            "Music" categories. The number of top channels creating "Music" content remain at a
+            constant high until 2012, where it has been decreasing since then. The number of top channels
+            creating "Entertainment" videos have fluctuated through the years. While the number of top channels
+            have been high up until 2018, it faced a low in number of top channels in 2009. The number of top 
+            channels have also been on a decline since 2019.<br><br>
+
+            From 2011-2012, there has been a spike in number of top channels creating "Gaming" videos which
+            then decreased in following years. The number of top channels creating "People & Vlog" videos 
+            spiked in 2014. In 2019, there was a small spike in "People & Vlog" top youtube channels, which 
+            could be attributed to the COVID-19 pandemic.
+        </p>
+
+        <div id="category_by_year"></div>
+    </div>
+
+    <script type="module" src="js/cat_by_year.js"></script>
+
+    
+</body>
+</html>
