@@ -7,6 +7,8 @@ const app = Vue.createApp({
             data_top: [],           // Stores top youtuber data
             legend_data: [],        // Stores all country => colour mapping
             legend_data_top: [],    // Stores country => colour mapping for countries in data_top
+            xAxis: null,
+            yAxis: null,
             criteria: {             // Stores filter criteria
                 country: [],
                 category: [],
@@ -144,11 +146,12 @@ const app = Vue.createApp({
                 .scale(x)
                 .tickFormat(d => (d / 1000000).toFixed(2) + "M"); // Display subscribers in millions
 
-            graph.append("g")
+            var xAxisGroup = graph.append("g")
                 .attr("class", "axis")
                 .attr("transform", "translate(0," + (height - marginBottom) + ")")
-                .call(xAxis)
-                .append("text")
+                .call(xAxis);
+
+            xAxisGroup.append("text")
                 .text("Subscribers")
                 .attr("x", width - 30)
                 .attr("dy", -5)
@@ -177,7 +180,7 @@ const app = Vue.createApp({
 
             // Add count labels to the bars
             graph.selectAll(".count-label")
-                .data(data)
+                .data(data, d => d.youtuber)
                 .enter()
                 .append("text")
                 .attr("class", "count-label")
@@ -193,6 +196,8 @@ const app = Vue.createApp({
 
             // Save graph to Vue
             this.barChart = graph;
+            this.xAxis = xAxisGroup;
+            this.yAxis = yAxisGroup;
         }, // top_channels_create
 
         top_channels_update() {
@@ -203,6 +208,9 @@ const app = Vue.createApp({
             const marginRight = this.barChart_dim.marginRight;
             const marginBottom = this.barChart_dim.marginBottom;
             const marginLeft = this.barChart_dim.marginLeft;
+
+            // Declare transition duration
+            const transition_time = 750;
 
             // New data for updating the chart.
             this.top_channels_filter();
@@ -239,14 +247,14 @@ const app = Vue.createApp({
                         .attr("opacity", 0)
                         // transition to final position
                         .transition()
-                        .duration(750)
+                        .duration(transition_time)
                         .attr("y", (d) => y(d.youtuber))
                         .attr('opacity', 1),
 
                     update => update
                         // Declare transition to final position
                         .transition()
-                        .duration(750)
+                        .duration(transition_time)
                         // .attr("x", marginLeft)
                         .attr("y", (d) => y(d.youtuber))
                         .attr("width", (d) => x(d.subscribers) - marginLeft)
@@ -255,12 +263,59 @@ const app = Vue.createApp({
                     exit => exit
                         // Declare transition to final position
                         .transition()
-                        .duration(750)
+                        .duration(transition_time)
+                        .attr("y", height - marginBottom) // (d) => y(d.youtuber))
+                        .attr('opacity', 0)
+                        // then remove().
+                        .remove()
+                );
+            
+            this.barChart
+                    .selectAll(".count-label")
+                .data(this.data_top, d => d.youtuber)
+                .join(
+                    enter => enter
+                    .append("text")
+                    .attr("class", "count-label")
+                    .attr("x", (d) => x(d.subscribers) + 5)
+                    .attr("y", height - marginBottom)
+                    .text((d) => (d.subscribers / 1000000).toFixed(2) + "M") // Display subscribers in millions
+                    .style("font-size", "12px")
+                    .style("fill", "black")
+                    .style("text-anchor", "start")
+                    .attr("opacity", 0)
+                    .transition()
+                    .duration(transition_time)
+                    .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5)
+                    .attr('opacity', 1),
+
+                    update => update
+                        // Declare transition to final position
+                        .transition()
+                        .duration(transition_time)
+                        .attr("x", (d) => x(d.subscribers) + 5)
+                        .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5),
+                        
+                    exit => exit
+                        // Declare transition to final position
+                        .transition()
+                        .duration(transition_time)
                         .attr("y", height - marginBottom) // (d) => y(d.youtuber))
                         .attr('opacity', 0)
                         // then remove().
                         .remove()
                 )
+
+            this.xAxis.transition().duration(transition_time).call(
+                d3.axisBottom()
+                    .scale(x)
+                    .tickFormat(d => (d / 1000000).toFixed(2) + "M")
+            );
+
+            this.yAxis.transition().duration(transition_time).call(
+                d3.axisLeft()
+                    .scale(y)
+            );
         }, // top_channels_update
 
         treemap_countYoutubers(data, target) {
