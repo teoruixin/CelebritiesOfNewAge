@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <head>
+    <title>Top Youtubers by Count</title>
+    <style>
+      h1 {
+        font-size: 20px;
+        font-family: 'Times New Roman';
+        text-align: center;
+      }
+
+      .chart-container {
+        display: flex;
+      }
+
+      svg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .legend {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+      }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h1>Top Youtubers by Count</h1>
+    <div class="chart-container">
+      <svg class="chart"></svg>
+      <div class="legend"></div>
+    </div>
+    <script>
+      var chartWidth = 800;
+      var chartHeight = 400;
+
+      /******** Data ********/
+      var allData;
+
+      /******** Load Data ********/
+      var index = 0;
+      d3.csv("data/barchart_data/merged.csv", (row, i) => {
+        return {
+          date: row.month,
+          youtuber: row.channel_title,
+          count: +row.count,
+          country: row.country
+        };
+      }).then(rows => {
+        // filter out the "nan" category
+        rows = rows.filter(row => row.category !== "nan");
+
+        // calculate counts for each youtuber
+        var youtuberCounts = d3.rollup(
+          rows,
+          v => d3.sum(v, d => d.count),
+          d => d.youtuber,
+          d => d.country
+        );
+
+        var data = Array.from(youtuberCounts, ([youtuber, countsByCountry]) => ({
+          youtuber,
+          countsByCountry: Array.from(countsByCountry, ([country, count]) => ({
+            country,
+            count
+          }))
+        }));
+
+        // sort the data by total count in descending order
+        data.sort((a, b) => {
+          let sumA = a.countsByCountry.reduce((acc, curr) => acc + curr.count, 0);
+          let sumB = b.countsByCountry.reduce((acc, curr) => acc + curr.count, 0);
+          return sumB - sumA;
+        });
+
+        // Get only the top 20 Youtubers
+        data = data.slice(0, 20);
+
+        allData = data;
+        makeChart(data);
+        createLegends(data);
+      }).catch(error => {
+        console.log(error);
+      });
+
+      /******** Scales and Colors ********/
+      var x, y, color;
+
+      /******** Axes ********/
+      var xAxis;
+      var yAxis;
+
+      /******** Make Chart ********/
+      function makeChart(data) {
+        // Create a color scale for different countries
+        color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // Calculate the maximum total count for any Youtuber
+        var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
+
+        // x position
+        x = d3.scaleLinear()
+          .domain([0, maxTotalCount])
+          .nice()
+          .range([120, chartWidth - 40]);
+
+        // y position
+        y = d3.scaleBand()
+          .domain(data.map(d => d.youtuber))
+          .range([20, chartHeight - 25])
+          .padding(0.2);
+
+        var canvas = d3.select(".chart")
+          .style("width", chartWidth + 20)
+          .style("height", chartHeight)
+          .attr("transform", "translate(0," + -10 + ")");
+
+        var bars = d3.select(".chart").selectAll("g")
+          .data(data);
+
+        // ENTER
+        var enter = bars.enter().append("g")
+          .attr("transform", (d, i) => "translate(0," + y(d.youtuber) + ")");
+
+        // Add bars for each country
+        enter.selectAll("rect")
+          .data(d => d.countsByCountry)
+          .enter()
+          .append("rect")
+          .attr("fill", (d) => color(d.country))
+          .attr("x", 120)
+          .attr("y", 0)
+          .attr("width", (d) => x(d.count))
+          .attr("height", y.bandwidth());
+
+        xAxis = d3.axisBottom()
+          .scale(x);
+
+        yAxis = d3.axisLeft()
+          .scale(y);
+
+        var yAxisGroup = canvas.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(120,0)")
+          .call(yAxis);
+
+        yAxisGroup.selectAll("text")
+          .attr("transform", "translate(-5,0")
+          .style("text-anchor", "end");
+
+        yAxisGroup.append("text")
+          .text("Youtuber")
+          .attr("y", 17)
+          .attr("dx", -10)
+          .style("text-anchor", "end")
+          .style("font-weight", "bold");
+
+        canvas.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0," + (chartHeight - 25) + ")")
+          .call(xAxis)
+          .append("text")
+          .text("Count")
+          .attr("x", chartWidth - 5)
+          .attr("dy", -5)
+          .style("text-anchor", "end")
+          .style("fill", "black")
+          .style("font-weight", "bold");
+      }
+
+      /******** Create Legends ********/
+      function createLegends(data) {
+        var legend = d3.select(".legend");
+
+        data[0].countsByCountry.forEach(function (d) {
+          var legendItem = legend.append("div").attr("class", "legend-item");
+          legendItem
+            .append("div")
+            .attr("class", "legend-color")
+            .style("background-color", color(d.country));
+          legendItem
+            .append("div")
+            .text(d.country)
+            .style("font-size", "12px");
+        });
+      }
+    </script>
+  </body>
+</html>
