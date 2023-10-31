@@ -54,17 +54,19 @@
             <h1>Trending Videos</h1>
             <h4 class="d-inline px-2">By</h4>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group" ></div>
-                <input type="radio" v-model="type" class="btn-check" name="btnradio" id="videos" value="videos" @change="updateChart()" autocomplete="off" :checked="type == 'videos'">
-                <label class="btn btn-outline-primary" for="videos">Videos</label>
+                <input type="radio" class="btn-check" name="trend" id="counts" value="count" @change="makechart()" v-model="n" checked>
+                <label class="btn btn-outline-primary" for="counts">Count</label>
+                
+                &nbsp; <strong>or</strong> &nbsp;
             
-                <input type="radio" v-model="type" class="btn-check" name="btnradio" id="views" value="views" @change="updateChart()" autocomplete="off" :checked="type == 'views'">
-                <label class="btn btn-outline-primary" for="views">Views</label>
+                <input type="radio" class="btn-check" name="trend" id="trendviews" value="views" @change="makechart()" v-model="n">
+                <label class="btn btn-outline-primary" for="trendviews">Views</label>
             </div>
-            <h1>Trending Videos (Count)</h1>
+            <h1>Trending Videos</h1>
             <div id="trending_by_count"></div>
         
-            <h1>Trending Videos (Views)</h1>
-            <div id="trending_by_views"></div>
+            <!-- <h1>Trending Videos (Views)</h1>
+            <div id="trending_by_views"></div> -->
         </div>
 
         <hr>
