@@ -47,7 +47,7 @@ var allData;
 
 var index = 0;
 
-d3.csv("Global Youtube Statistics.csv", (row, i) => {
+d3.csv("data/Global Youtube Statistics.csv", (row, i) => {
   return {
     youtuber: row.Youtuber,
     viewsDays: +row.video_views_for_the_last_30_days,
