@@ -131,7 +131,7 @@ const app2 = Vue.createApp({
                     .attr("font-size", "12px");
             });
 
-            this.updateChart(data, colour, xscale);
+            this.updateChart();
         
             // Append the graph element to the element with id "trending_by_count".
             trending_by_count.append(graph.node());
@@ -241,53 +241,9 @@ const app2 = Vue.createApp({
         //     trending_by_views.append(graph.node());
         // },
 
-        updateChart(data, colour, xscale) {
+        updateChart() {
             d3.select("svg").remove();
             
-            var scatter = d3.select("#trending_by_count").select("svg").data(data);
-            scatter.selectAll('circle').remove();
-                        
-            const yscale = d3.scaleLinear()
-                .domain([0, d3.max(data, d => this.n == "count" ? d.count: d.views)])
-                .range([400 - 30, 20]);
-            
-            // Add the y-axis. This is vertical that starts at 0,0 (top left) and goes downwards.
-            scatter.append("g")
-                .attr("transform", `translate(80,0)`)
-                .call(d3.axisLeft(yscale));
-
-            // Plot points.
-            scatter.selectAll('circle')
-                .data(data)
-                .join('circle')
-                .attr('r', 2.5)
-                .attr('cx', d => xscale(d.date))
-                .attr('cy', d => yscale(this.n == "count" ? d.count : d.views))
-                .attr('fill', d => colour(d.category));
-        
-            // Plot lines.
-            // 1) Group data
-            var groupedData = Array.from(
-                d3.group(data, d => d.category), ([category, data]) => ({ category, data })
-            );
-        
-            // 2) define line generator
-            var lineGenerator = d3.line()	
-                .x(d=> xscale(d.date))
-                .y(d=> yscale(this.n == "count" ? d.count : d.views));
-                // .curve(d3.curveCardinal);
-                // .curve(d3.curveNatural);
-                
-            // 3) Plot lines by for-loop over categories
-            for (var catData of groupedData) {
-                scatter.append("path")
-                    .attr("class", "line")
-                    .style("fill","none")
-                    .attr('opacity', 0.75)
-                    .style("stroke", colour(catData.category))
-                    .style("stroke-width", 1.5)
-                    .attr("d", lineGenerator(catData.data))
-            }
         },
 
         makechart() {
