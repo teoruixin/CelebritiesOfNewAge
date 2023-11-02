@@ -7,30 +7,121 @@
     <title>Document</title>
 
     <style>
-        #div_id,
-        #div_id2 {
-            margin: 20px;
+        #top_channels_div {
+            width: 1080px;
             border: 1px solid slateblue;
+            float: left;
+            z-index: 0;
+        }
+
+        #treemaps_div {
+            width: 900px;
+            border: 1px solid slateblue;
+            margin: 20px auto;
+            background-color: rgba(255,255,255, 0.8);
+        }
+
+        #popup_bg {
+            /* display: none; */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        #top_youtubers_div {
+            float:left;
+            position: relative;
+        }
+        .legend {
+            float: right;
+            position: relative;
+            padding: 20px;
+            margin: 10px 40px;
+            border: 1px solid slateblue;
+        }
+        .info {
+            float: right;
+            position: relative;
+            padding: 20px;
+            margin: 10px 40px;
+            border: 1px solid slateblue;
+            width: 225px;
+        }
+        .treemap-info {
+            float: right;
+            position: relative;
+            padding: 20px;
+            margin: 10px 20px;
+            border: 1px solid slateblue;
+            width: 175px;
+        }
+        .treemap-btn {
+            position: relative;
+            /* float:right; */
+            margin: 10px;
         }
     </style>
 </head>
 
 <body id="channels">
-    {{ criteria }} <br/>
+    <!-- {{ criteria }} <br/>
     <button v-on:click="top_channels_update()">donttestme</button>
     <button v-on:click="generate_legend()">generate lg</button>
-    <button v-on:click="update_legend()">upd leg</button>
-    <h1>Top 5 Countries and the Top 5 YouTubers by Subscribers</h1>
-    <div id="top_youtubers_div"></div>
-    <div class="legend"></div>
+    <button v-on:click="update_legend()">upd leg</button> -->
 
+    <div id="top_channels_div">
+        <h1>Top 5 Countries and the Top 5 YouTubers by Subscribers</h1>
+        <div id="top_youtubers_div"></div>
+        <div class="legend"></div>
+        <div class="info">
+            Countries: <span v-if="criteria.country.length == 0">Showing All...</span>
+            <ul>
+                <li v-for="(country, idx) in criteria.country"> {{ country }} <span v-on:click="rm_from_list('country', idx, delay=false)">❌</span> </li>
+            </ul>
+            Categories: <span v-if="criteria.category.length == 0">Showing All...</span>
+            <ul>
+                <li v-for="(category, idx) in criteria.category"> {{ category }} <span v-on:click="rm_from_list('category', idx, delay=false)">❌</span> </li>
+            </ul>
+            <button type="button" v-on:click="popup(toHide = false)">Edit</button>
+        </div>
+    </div>
 
-    <h1>Total Number of Top YouTubers per Country </h1>
-    <div id="treemap_countries"></div>
+    <div id="popup_bg" style="display: none;">
+        <div id="treemaps_div">
+            <div class="treemap-info">
+                Countries: <span v-if="criteria.country.length == 0">Showing All...</span>
+                <ul>
+                    <li v-for="(country, idx) in criteria.country"> {{ country }} <span v-on:click="rm_from_list('country', idx, delay=true)">❌</span> </li>
+                </ul>
+                Categories: <span v-if="criteria.category.length == 0">Showing All...</span>
+                <ul>
+                    <li v-for="(category, idx) in criteria.category"> {{ category }} <span v-on:click="rm_from_list('category', idx, delay=true)">❌</span> </li>
+                </ul>
 
-    <h1>Total Number of Top YouTubers per Category </h1>
-    <div id="treemap_categories"></div>
-
+                <button type="button" v-on:click="popup(toHide = true)">
+                    Hide
+                </button>
+            </div>
+            <div id="treemap_countries">
+                <h1>Total Number of Top YouTubers per Country </h1>
+                <button type="button" class="treemap-btn" v-on:click="change_treemap(target = 'category')">
+                    Change to Category
+                </button>
+            </div>
+    
+            <div id="treemap_categories" style="display: none;">
+                <h1>Total Number of Top YouTubers per Category </h1>
+                <button type="button" class="treemap-btn" v-on:click="change_treemap(target = 'country')">
+                    Change to Country
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Script importing -->
 
     <!-- Import D3. -->
