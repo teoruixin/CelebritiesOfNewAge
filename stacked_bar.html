@@ -38,30 +38,31 @@
       height: 16px;
       margin-right: 5px;
     }
+
+    #date-filter {
+      width: 80px;
+      height: 20px;
+      margin-left: 5px;
+    }
   </style>
   <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
 </head>
 
 <body>
   <h1>Top Youtubers by Count</h1>
-  <div class="slicer-container">
-    <label for="month-slicer">Select Month:</label>
-    <select id="month-slicer">
-      <option value="All">All</option>
-    </select>
-  </div>
-
   <div class="chart-container">
+    <div class="filter-header">Filter by Date:</div> <!-- Filter header -->
+    <select id="date-filter"></select> <!-- Add date filter dropdown -->
     <svg class="chart"></svg>
     <div class="legend"></div>
   </div>
   <script>
-    var canvas;
     var chartWidth = 800;
     var chartHeight = 400;
 
     /******** Data ********/
     var allData;
+    var selectedDate = null;
 
     /******** Load Data ********/
     var index = 0;
@@ -75,6 +76,25 @@
     }).then(rows => {
       // filter out the "nan" category
       rows = rows.filter(row => row.category !== "nan");
+
+      // Create a list of unique dates
+      var uniqueDates = [...new Set(rows.map(row => row.date))];
+
+      // Populate the date filter dropdown with unique dates
+      var dateFilter = d3.select("#date-filter");
+      dateFilter
+        .selectAll("option")
+        .data(uniqueDates)
+        .enter()
+        .append("option")
+        .text(d => d)
+        .attr("value", d => d);
+
+      // Attach an event handler to the dropdown
+      dateFilter.on("change", function () {
+        selectedDate = this.value; // Update selectedDate when a new date is selected
+        updateChart();
+      });
 
       // calculate counts for each youtuber
       var youtuberCounts = d3.rollup(
@@ -103,24 +123,8 @@
       data = data.slice(0, 20);
 
       allData = data;
-
-      createAxes(); // Create and configure the axes
-      createLegends(data); // Create the legend
-
-      const monthSlicer = document.getElementById("month-slicer");
-      const uniqueMonths = [...new Set(rows.map((row) => row.date))];
-      uniqueMonths.forEach((month) => {
-        const option = document.createElement("option");
-        option.value = month;
-        option.text = month;
-        monthSlicer.appendChild(option);
-      });
-
-      monthSlicer.addEventListener("change", function () {
-        const selectedMonth = monthSlicer.value;
-        updateChart(selectedMonth);
-      });
-
+      makeChart(data);
+      createLegends(data);
     }).catch(error => {
       console.log(error);
     });
@@ -129,22 +133,16 @@
     var x, y, color;
 
     /******** Axes ********/
-    var xAxis, yAxis;
+    var xAxis;
+    var yAxis;
 
-    // Create and configure the axes
-    function createAxes() {
-      // Clear the previous chart content
-      canvas = d3.select(".chart")
-        .attr("width", chartWidth + 20)
-        .attr("height", chartHeight)
-        .attr("transform", "translate(0,-10)");
-      canvas.selectAll("*").remove(); // Remove existing chart elements
-
-      // Calculate the maximum total count for any Youtuber
-      var maxTotalCount = d3.max(allData, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
-
+    /******** Make Chart ********/
+    function makeChart(data) {
       // Create a color scale for different countries
       color = d3.scaleOrdinal(d3.schemeCategory10);
+
+      // Calculate the maximum total count for any Youtuber
+      var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
 
       // x position
       x = d3.scaleLinear()
@@ -154,12 +152,56 @@
 
       // y position
       y = d3.scaleBand()
-        .domain(allData.map(d => d.youtuber))
+        .domain(data.map(d => d.youtuber))
         .range([20, chartHeight - 25])
         .padding(0.2);
 
-      createBars(allData);
-      
+      var canvas = d3.select(".chart")
+        .attr("width", chartWidth + 20)
+        .attr("height", chartHeight)
+        .attr("transform", "translate(0," + -10 + ")");
+
+      // var data = d3.stack()
+      //   .keys("country")
+      //   (data)
+
+      var bars = d3.select(".chart").selectAll("g")
+        .data(data);
+
+      // ENTER
+      var enter = bars.enter().append("g")
+        .attr("transform", (d, i) => "translate(0," + y(d.youtuber) + ")");
+
+      // YJ's loopy code... try to crack d3.stack()
+      var totalCount;
+      // loop over rows
+      for (row of data) {        // {youtuber: name, countsByCountry: [{country: CA, count: 57}, {country: IN, count: 57}] }
+        // Reset starting x
+        totalCount = 0;
+        // loop over countsByCountry. Draw rectangle, add to starting x
+        for (countByCountry of row.countsByCountry) {
+          d3.select('.chart')
+            .append("rect")
+            .attr("fill", color(countByCountry.country))
+            .attr("x", x(totalCount))
+            .attr("y", y(row.youtuber))
+            .attr("width", x(countByCountry.count) - 120)
+            .attr("height", y.bandwidth());
+
+          totalCount += countByCountry.count;
+        }
+      }
+      // // Add bars for each country
+      // enter.selectAll("rect")
+      //   .data(d => d.countsByCountry)
+      //   .enter()
+      //   .append("rect")
+      //   .attr("fill", (d) => color(d.country))
+      //   .attr("x", 120)
+      //   .attr("y", 0)
+      //   .attr("width", (d) => x(d.count))
+      //   .attr("height", y.bandwidth());
+
       xAxis = d3.axisBottom()
         .scale(x);
 
@@ -194,46 +236,11 @@
         .style("fill", "black")
         .style("font-weight", "bold");
     }
-
-    function updateChart(selectedMonth) {
-        // Filter the data based on the selected month
-        var filteredData = allData.filter((d) => d.date === selectedMonth);
-        createBars(filteredData);
-    }
-
-    /******** Create Bars ********/
-    function createBars(data) {
-        var bars = d3.select(".chart").selectAll("g").data(data, function (d) {
-            return d.youtuber; // Use the youtuber name as a key function
-        });
-
-        bars.exit().remove(); // Remove any bars that are no longer needed
-
-        var enter = bars.enter().append("g").attr("transform", (d, i) => "translate(0," + y(d.youtuber) + ")");
-
-        var totalCount;
-        // loop over rows
-        for (row of data) {
-            if (row.youtuber) { // Check if 'youtuber' property exists
-                // Reset starting x
-                totalCount = 0;
-                // loop over countsByCountry. Draw rectangle, add to starting x
-                for (countByCountry of row.countsByCountry) {
-                    enter
-                        .append("rect")
-                        .attr("fill", color(countByCountry.country))
-                        .attr("x", x(totalCount))
-                        .attr("y", y(row.youtuber))
-                        .attr("width", x(totalCount + countByCountry.count) - x(totalCount))
-                        .attr("height", y.bandwidth());
-
-                    totalCount += countByCountry.count;
-                }
-            }
+      // Update the chart with filtered data based on the selected date
+      function updateChart() {
+          var filteredData = allData.filter(d => d.date === selectedDate);
+          makeChart(filteredData);
         }
-    }
-
-
 
     /******** Create Legends ********/
     function createLegends(data) {
