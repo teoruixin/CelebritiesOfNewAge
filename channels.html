@@ -88,6 +88,7 @@
                 <li v-for="(category, idx) in criteria.category"> {{ category }} <span v-on:click="rm_from_list('category', idx, delay=false)">❌</span> </li>
             </ul>
             <button type="button" v-on:click="popup(toHide = false)">Edit</button>
+            <button type="button" v-on:click="criteria = { country:[], category:[] }; top_channels_update()">Clear All</button>
         </div>
     </div>
 
@@ -106,6 +107,7 @@
                 <button type="button" v-on:click="popup(toHide = true)">
                     Hide
                 </button>
+                <button type="button" v-on:click="criteria = { country:[], category:[] }">Clear All</button>
             </div>
             <div id="treemap_countries">
                 <h1>Total Number of Top YouTubers per Country </h1>
