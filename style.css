@@ -1,4 +1,39 @@
-li{
-    border-radius: 50px;
-    
-}
+/* h1 {
+    font-size: 20px;
+    font-family: 'Times New Roman';
+    text-align: center;
+  } */
+
+  /* .chart-container {
+    display: flex;
+  } */
+
+  /* svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  } */
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+  }
+
+  /* #date-filter {
+    width: 80px;
+    height: 20px;
+    margin-left: 5px;
+  } */

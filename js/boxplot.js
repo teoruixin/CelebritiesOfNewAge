@@ -343,37 +343,37 @@ const app = Vue.createApp({
                     .style("width", 80)
         
             // Add individual points
-            svg
-            .selectAll("indPoints")
-            .data(data)
-            .enter()
-            .append("circle")
-                .attr("cx", function(d){return(x(d.category) )})
-                .attr("cy", function(d){return(y(d.log))})
-                .attr("r", 3)
-                .style("fill", "white")
-                .attr("stroke", "black")
-                .attr("opacity", 0.5)
-            // Interaction
-            .on("mouseover", function(event, d){
-                Tooltip
-                .style("opacity", 1)
-                d3.select(this)
-                .style("stroke", "black")
-                .style("opacity", 1)
+            // svg
+            // .selectAll("indPoints")
+            // .data(data)
+            // .enter()
+            // .append("circle")
+            //     .attr("cx", function(d){return(x(d.category) )})
+            //     .attr("cy", function(d){return(y(d.log))})
+            //     .attr("r", 3)
+            //     .style("fill", "white")
+            //     .attr("stroke", "black")
+            //     .attr("opacity", 0.5)
+            // // Interaction
+            // .on("mouseover", function(event, d){
+            //     Tooltip
+            //     .style("opacity", 1)
+            //     d3.select(this)
+            //     .style("stroke", "black")
+            //     .style("opacity", 1)
                 
-            })
-            .on("mousemove", function(event, d){
-                Tooltip
-                .html("<b>Video: </b>" + d.title +"<br><b>Channel: </b>" + d.channel + "<br><b>Count: </b>" + d.value)
-                .style("left", (event.pageX+20) + 'px')
-                .style("top", (event.pageY+20) + 'px')
-            })
+            // })
+            // .on("mousemove", function(event, d){
+            //     Tooltip
+            //     .html("<b>Video: </b>" + d.title +"<br><b>Channel: </b>" + d.channel + "<br><b>Count: </b>" + d.value)
+            //     .style("left", (event.pageX+20) + 'px')
+            //     .style("top", (event.pageY+20) + 'px')
+            // })
         
-            .on("mouseout", function(event, d){
-                Tooltip
-                .style("opacity", 0)
-            })
+            // .on("mouseout", function(event, d){
+            //     Tooltip
+            //     .style("opacity", 0)
+            // })
         
         
         },
@@ -483,40 +483,40 @@ const app = Vue.createApp({
                 .style("width", 80)
         
             // Add individual points
-            var circles = svg.selectAll("circle").data(data, key)
-            circles.exit().transition().duration(1000)
-                .attr("r", 0)
-                .attr("opacity", 0)
-                .remove()
+            // var circles = svg.selectAll("circle").data(data, key)
+            // circles.exit().transition().duration(1000)
+            //     .attr("r", 0)
+            //     .attr("opacity", 0)
+            //     .remove()
         
-            circles.enter().append("circle")
-                .attr("cx", function(d){return(x(d.category) + margin.left)})
-                .attr("cy", function(d){return(y(d.log))})
-                .attr("r", 3)
-                .style("fill", "white")
-                .attr("stroke", "black")
-                .attr("opacity", 0.5)
+            // circles.enter().append("circle")
+            //     .attr("cx", function(d){return(x(d.category) + margin.left)})
+            //     .attr("cy", function(d){return(y(d.log))})
+            //     .attr("r", 3)
+            //     .style("fill", "white")
+            //     .attr("stroke", "black")
+            //     .attr("opacity", 0.5)
                   
-            // Interaction
-            .on("mouseover", function(event, d){
-                Tooltip
-                .style("opacity", 1)
-                d3.select(this)
-                .style("stroke", "black")
-                .style("opacity", 1)
+            // // Interaction
+            // .on("mouseover", function(event, d){
+            //     Tooltip
+            //     .style("opacity", 1)
+            //     d3.select(this)
+            //     .style("stroke", "black")
+            //     .style("opacity", 1)
                 
-            })
-            .on("mousemove", function(event, d){
-                Tooltip
-                .html("<b>Video: </b>" + d.title +"<br><b>Channel: </b>" + d.channel + "<br><b>Count: </b>" + d.value)
-                .style("left", (event.pageX+20) + 'px')
-                .style("top", (event.pageY+20) + 'px')
-            })
+            // })
+            // .on("mousemove", function(event, d){
+            //     Tooltip
+            //     .html("<b>Video: </b>" + d.title +"<br><b>Channel: </b>" + d.channel + "<br><b>Count: </b>" + d.value)
+            //     .style("left", (event.pageX+20) + 'px')
+            //     .style("top", (event.pageY+20) + 'px')
+            // })
         
-            .on("mouseout", function(event, d){
-                Tooltip
-                .style("opacity", 0)
-            })
+            // .on("mouseout", function(event, d){
+            //     Tooltip
+            //     .style("opacity", 0)
+            // })
         
             
         }
