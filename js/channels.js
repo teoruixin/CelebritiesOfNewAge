@@ -15,24 +15,50 @@ const app = Vue.createApp({
             },
             barChart: null,         // Stores the bar chart object
             barChart_dim: {         // Stores dimensions of bar chart 
-                width: 1080,
+                width: 700,
                 height: 400,
-                marginTop: 20,
-                marginRight: 20,
-                marginBottom: 30,
-                marginLeft: 100
+                marginTop: 10,
+                marginRight: 10,
+                marginBottom: 20,
+                marginLeft: 150,
             },
             treemap_dim: {          // Stores dimensions of treemap
-                width: 800,
+                width: 600,
                 height: 400,
-                marginTop: 30,
-                marginRight: 30,
-                marginBottom: 30,
-                marginLeft: 30
+                marginTop: 10,
+                marginRight: 10,
+                marginBottom: 10,
+                marginLeft: 10
             }
         }
     }, // /data
     methods: {
+        popup(toHide) {     // contains this.top_channels_update
+            if (toHide) {
+                document.getElementById("popup_bg").style.display = "none";
+                this.top_channels_update();
+                return
+            }
+            document.getElementById("popup_bg").style.display = "block";
+            return
+        },
+        change_treemap(target) {     // contains this.top_channels_update
+            if (target == "country") {
+                document.getElementById("treemap_categories").style.display = "none";
+                document.getElementById("treemap_countries").style.display = "block";
+                return
+            }
+            document.getElementById("treemap_countries").style.display = "none";
+            document.getElementById("treemap_categories").style.display = "block";
+            return
+        },
+        rm_from_list(target, idx, delay) {
+            this.criteria[target].splice(idx,1);
+            if (delay) {
+                return;
+            }
+            this.top_channels_update();
+        },
         top_channels_filter() {
             // Define number of channels to display
             const top_n = 20;
@@ -353,22 +379,18 @@ const app = Vue.createApp({
                 var tgtIndex = this.criteria.country.indexOf(d.data.country);
                 if (tgtIndex >= 0) {
                     this.criteria.country.splice(tgtIndex, 1);
-                    this.top_channels_update();
                     return;
                 }
                 this.criteria.country.push(d.data.country);
-                this.top_channels_update();
                 return;
             }
             if ("category" in d.data) {
                 var tgtIndex = this.criteria.category.indexOf(d.data.category);
                 if (tgtIndex >= 0) {
                     this.criteria.category.splice(tgtIndex, 1);
-                    this.top_channels_update();
                     return;
                 }
                 this.criteria.category.push(d.data.category);
-                this.top_channels_update();
                 return;
             }
         }, // treemap_onclick(event, d)

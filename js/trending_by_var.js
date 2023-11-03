@@ -63,12 +63,28 @@ const app2 = Vue.createApp({
             graph.append("g")
                 // translate() takes in axis starting point (x,y). 0,0 is the top left. margins are specified in const x above, so start at 0.
                 .attr("transform", `translate(0, ${height - marginBottom})`)
-                .call(d3.axisBottom(xscale));
+                .call(d3.axisBottom(xscale))
+                .append("text")
+                    .text("Years")
+                    .attr("x", width - marginRight - 130)
+                    .attr("dy", 20)
+                    .style("text-anchor", "end")
+                    .style("fill", "black")
+                    .style("font-size", "13px")
+                    .style("font-weight", "bold");
         
             // Add the y-axis. This is vertical that starts at 0,0 (top left) and goes downwards.
             graph.append("g")
                 .attr("transform", `translate(${marginLeft},0)`)
-                .call(d3.axisLeft(yscale));
+                .call(d3.axisLeft(yscale))
+                .append("text")
+                    .text(this.n == "count" ? "Total Video Count" : "Total Video Views")
+                    .attr("y", 10)
+                    .attr("dx", 35)
+                    .style("text-anchor", "end")
+                    .style("fill", "black")
+                    .style("font-size", "13px")
+                    .style("font-weight", "bold");
             
             // Plot points.
             graph.selectAll('circle')

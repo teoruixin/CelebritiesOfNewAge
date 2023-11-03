@@ -38,6 +38,12 @@
       height: 16px;
       margin-right: 5px;
     }
+
+    #date-filter {
+      width: 80px;
+      height: 20px;
+      margin-left: 5px;
+    }
   </style>
   <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
 </head>
@@ -45,6 +51,8 @@
 <body>
   <h1>Top Youtubers by Count</h1>
   <div class="chart-container">
+    <div class="filter-header">Filter by Date:</div> <!-- Filter header -->
+    <select id="date-filter"></select> <!-- Add date filter dropdown -->
     <svg class="chart"></svg>
     <div class="legend"></div>
   </div>
@@ -54,6 +62,7 @@
 
     /******** Data ********/
     var allData;
+    var selectedDate = null;
 
     /******** Load Data ********/
     var index = 0;
@@ -67,6 +76,25 @@
     }).then(rows => {
       // filter out the "nan" category
       rows = rows.filter(row => row.category !== "nan");
+
+      // Create a list of unique dates
+      var uniqueDates = [...new Set(rows.map(row => row.date))];
+
+      // Populate the date filter dropdown with unique dates
+      var dateFilter = d3.select("#date-filter");
+      dateFilter
+        .selectAll("option")
+        .data(uniqueDates)
+        .enter()
+        .append("option")
+        .text(d => d)
+        .attr("value", d => d);
+
+      // Attach an event handler to the dropdown
+      dateFilter.on("change", function () {
+        selectedDate = this.value; // Update selectedDate when a new date is selected
+        updateChart();
+      });
 
       // calculate counts for each youtuber
       var youtuberCounts = d3.rollup(
@@ -208,6 +236,11 @@
         .style("fill", "black")
         .style("font-weight", "bold");
     }
+      // Update the chart with filtered data based on the selected date
+      function updateChart() {
+          var filteredData = allData.filter(d => d.date === selectedDate);
+          makeChart(filteredData);
+        }
 
     /******** Create Legends ********/
     function createLegends(data) {
