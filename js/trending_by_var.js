@@ -258,7 +258,7 @@ const app2 = Vue.createApp({
         // },
 
         updateChart() {
-            d3.select("svg").remove();
+            d3.select("#trending_by_count").select("svg").remove();
             
         },
 
