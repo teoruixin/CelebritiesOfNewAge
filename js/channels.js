@@ -629,7 +629,7 @@ const app = Vue.createApp({
     }, // methods
 
     mounted() {
-        var countryColors = d3.scaleOrdinal(d3.schemeCategory10);
+        var countryColors = d3.scaleOrdinal(d3.schemeSet3);
 
         d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
             return {
