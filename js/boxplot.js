@@ -1,7 +1,7 @@
 // Declare the chart dimensions and margins.
-const chartWidth = 1000;
+const chartWidth = 500;
 const chartHeight = 400;
-var margin = {top: 50, right: 30, bottom: 80, left: 40},
+var margin = {top: 50, right: 50, bottom: 80, left: 50},
 width = chartWidth - margin.left - margin.right,
 height = chartHeight - margin.top - margin.bottom;
 
@@ -57,8 +57,9 @@ const app = Vue.createApp({
                     name: "United States",
                     code: "US",
                 }],
-            months: ["January","February","March","April","May","June","July","August","September","October","November","December"]
-
+            months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+            months_ddl : [],
+            categories: ["Comedy","Entertainment","Film & Animation","Gaming","Music","People & Blogs","Sports"],
         }
     },
     methods: {
@@ -71,6 +72,8 @@ const app = Vue.createApp({
         },
 
         getEarlyData(country, month, type){
+            categories= this.categories
+            
             d3.csv("data/awc_early/" + country + ".csv", (row, i) => {
                 if (type=="Views"){
                     return {
@@ -124,10 +127,12 @@ const app = Vue.createApp({
                 }
                 
             }).then(rows => {
+                // console.log(rows);
+                rows = rows.filter(function(d) { return categories.includes(d.category);})
                 rows = rows.filter(function(d) { return d.month == month && d.year == 18; })
                 rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
-                // console.log(rows);
+                
                 this.update(rows, country, month, "2018", "early")
                 
             }).catch(error => {
@@ -136,6 +141,8 @@ const app = Vue.createApp({
         },
 
         getLateData(country, month, type){
+            categories= this.categories
+
             d3.csv("data/awc_late/"+ country + ".csv", (row, i) => {
                 if (type=="Views"){
                     return {
@@ -191,6 +198,7 @@ const app = Vue.createApp({
                 
             }).then(rows => {
                 // console.log(rows);
+                rows = rows.filter(function(d) { return categories.includes(d.category);})
                 rows = rows.filter(function(d) { return d.month == month && d.year == 2022; })
                 rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
@@ -216,9 +224,10 @@ const app = Vue.createApp({
             svg
             .append("text")
             .attr("class", "legendTitle")
-            .attr("x", chartWidth/2 - 150)
+            .attr("x", chartWidth/2 - 200)
             .attr("y", -20)
-            .text(this.type + " (Log) by Category in " + country + " in " + month + " " + year);
+            .text(this.type + " (Log) by Category in " + country + " in " + month + " " + year)
+            .style("font-weight", "bold");
         
             // create a tooltip
             Tooltip = d3.select("#boxplot")
@@ -233,7 +242,7 @@ const app = Vue.createApp({
             .style("position", "absolute")
             .style("width", "auto")
         
-            boxWidth = 20
+            boxWidth = 30
         
             stats = d3.rollup(data, function(d) {
                 q1 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.25)
@@ -265,7 +274,17 @@ const app = Vue.createApp({
                     .attr("x", 9)
                     .attr("dy", ".35em")
                     .attr("transform", "rotate(-45)")
-                    .style("text-anchor", "end");
+                    .style("text-anchor", "end")
+            svg.select(".xaxis")
+                .append("text")
+                    .attr("class", "xaxisTitle")
+                    .text("Category")
+                    .attr("x", width + 40)
+                    .attr("dy", 50)
+                    .style("text-anchor", "end")
+                    .style("fill", "black")
+                    .style("font-size", "13px")
+                    .style("font-weight", "bold");
         
             // Show the Y scale
             y = d3.scaleLinear()
@@ -273,8 +292,18 @@ const app = Vue.createApp({
                 // .domain([d3.min(data, d => d.log),d3.max(data, d => d.log)])
                 .range([height, 0])
             svg.append("g")
+                .attr("transform", `translate(0,0)`)
                 .attr("class", "yaxis")
                 .call(d3.axisLeft(y))
+                .append("text")
+                    .text(this.type +  " (Log)")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -30)
+                    .attr("dx",10)
+                    .style("text-anchor", "end")
+                    .style("fill", "black")
+                    .style("font-size", "13px")
+                    .style("font-weight", "bold");
         
             // // Show the main vertical line
             svg
@@ -327,7 +356,7 @@ const app = Vue.createApp({
                     .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
                     .attr("width", boxWidth )
                     .attr("stroke", "black")
-                    .style("fill", "#69b3a2")
+                    .style("fill", "#8dd3c7")
                 // Interaction
                 .on("mouseover", function(event, d){
                 Tooltip
@@ -428,8 +457,8 @@ const app = Vue.createApp({
                 
             xAxis = d3.axisBottom().scale(x).ticks(0);
         
+            svg.selectAll(".xaxis").select(".xaxisTitle").remove()
             svg.selectAll(".xaxis")
-                // .attr("transform", "translate(0," + height + ")")
                 .call(xAxis)
                 .selectAll("text")
                     .attr("y", 15)
@@ -437,6 +466,17 @@ const app = Vue.createApp({
                     .attr("dy", ".35em")
                     .attr("transform", "rotate(-45)")
                     .style("text-anchor", "end");
+
+            svg.select(".xaxis")
+            .append("text")
+                .attr("class", "xaxisTitle")
+                .text("Category")
+                .attr("x", width + 40)
+                .attr("dy", 50)
+                .style("text-anchor", "end")
+                .style("fill", "black")
+                .style("font-size", "13px")
+                .style("font-weight", "bold");
         
             //   Show the Y scale
             y = d3.scaleLinear()
@@ -491,7 +531,7 @@ const app = Vue.createApp({
                 .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
                 .attr("width", boxWidth )
                 .attr("stroke", "black")
-                .style("fill", "#69b3a2")
+                .style("fill", "#8dd3c7")
         
             // Show the median
             lines.enter().append("line")
@@ -544,6 +584,8 @@ const app = Vue.createApp({
     },
 
     created() {
+        categories= this.categories
+
         d3.csv("data/awc_early/US.csv", (row, i) => {
             return {
                 category: row.category,
@@ -551,12 +593,21 @@ const app = Vue.createApp({
                 channel: row.channel_title,
                 value: +row.views,
                 log: +row.views > 0 ? Math.log10(+row.views) : 0,
-                month: Number(row.trending_date.slice(3,5)),
+                month: this.months[Number(row.trending_date.slice(-2))-1],
                 year: Number(row.trending_date.slice(0,2)),
                 key: i
             };
         }).then(rows => {
-            rows = rows.filter(function(d) { return d.month == 5 && d.year == 18; })
+            this.months_ddl = []
+            for (var i = 0; i <= rows.length; i++) {
+                if(rows[i] != undefined){
+                    if(!this.months_ddl.includes(rows[i].month)){
+                        this.months_ddl.push(rows[i].month)
+                    }
+                }
+            }
+            rows = rows.filter(function(d) { return categories.includes(d.category);})
+            rows = rows.filter(function(d) { return d.month == 'May' && d.year == 18; })
             rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
             rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
             this.makeChart(rows, "US", "May", "2018", "early")
@@ -577,7 +628,7 @@ const app = Vue.createApp({
                 key: i
             };
         }).then(rows => {
-            rows.sort(function(a,b) { return b.value - a.value; })
+            rows = rows.filter(function(d) { return categories.includes(d.category);})
             rows = rows.filter(function(d) { return d.month == 5 && d.year == 2022; })
             rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
             rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
