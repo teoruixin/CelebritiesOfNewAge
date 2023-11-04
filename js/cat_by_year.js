@@ -14,7 +14,7 @@ await d3.csv("data/Global YouTube Statistics.csv", (row, i) => {
     rows = rows.filter(row => row.category !== "nan" && row.created_year !== "nan");
     rows = rows.filter(row => row.created_year >= 2005);
     rows = rows.filter(row => !["Autos & Vehicles", "Education", "Pets & Animals", "Movies", "Howto & Style", 
-    "News & Politics", "Science & Technology", "Shows", "Travel & Events"].includes(row.category));
+    "News & Politics", "Science & Technology", "Shows", "Travel & Events", "Nonprofits & Activism", "Trailers"].includes(row.category));
 
     // count number of YouTubers per category per year
     var catCountsByYear = d3.flatRollup(
