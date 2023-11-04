@@ -249,10 +249,10 @@ const app = Vue.createApp({
                 median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
                 q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
                 interQuantileRange = q3 - q1
-                min = q1 - 1.5 * interQuantileRange
-                max = q3 + 1.5 * interQuantileRange
-                // min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                // max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                // min = q1 - 1.5 * interQuantileRange
+                // max = q3 + 1.5 * interQuantileRange
+                min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
                 return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
             }, d => d.category)
             console.log(stats)
@@ -289,13 +289,14 @@ const app = Vue.createApp({
             // Show the Y scale
             y = d3.scaleLinear()
                 .domain([0,10])
-                // .domain([d3.min(data, d => d.log),d3.max(data, d => d.log)])
+                // .domain([0,d3.max(data, d => d.log)])
                 .range([height, 0])
             svg.append("g")
                 .attr("transform", `translate(0,0)`)
                 .attr("class", "yaxis")
                 .call(d3.axisLeft(y))
                 .append("text")
+                    .attr("class", "yaxisTitle")
                     .text(this.type +  " (Log)")
                     .attr("transform", "rotate(-90)")
                     .attr("y", -30)
@@ -433,11 +434,11 @@ const app = Vue.createApp({
                 median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
                 q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
                 interQuantileRange = q3 - q1
-                min = q1 - 1.5 * interQuantileRange
-                max = q3 + 1.5 * interQuantileRange
+                // min = q1 - 1.5 * interQuantileRange
+                // max = q3 + 1.5 * interQuantileRange
 
-                // min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                // max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
                 return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
             }, d => d.category)
             console.log(stats)
@@ -481,9 +482,10 @@ const app = Vue.createApp({
             //   Show the Y scale
             y = d3.scaleLinear()
                 .domain([0,10])
-                // .domain([d3.min(data, d => d.log),d3.max(data, d => d.log)])
+                // .domain([0,d3.max(data, d => d.log)])
                 .range([height, 0])
             svg.selectAll(".yaxis").call(d3.axisLeft(y))
+            svg.selectAll(".yaxis").select(".yaxisTitle").text(this.type +  " (Log)")
         
             // Show the main vertical line
             var lines = svg.selectAll("line").data(stats, key)
