@@ -60,17 +60,17 @@
             <div class="col">
                 <h4>By</h4>
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group" ></div>
-                    <input type="radio" v-model="type" class="btn-check" name="btnradio" id="views" value="Views" @change="updateChart()" autocomplete="off" :checked="type == 'Views'">
-                    <label class="btn btn-outline-primary" for="views">Views</label>
+                    <input type="radio" v-model="type" class="btn-check m-2" name="btnradio" id="views" value="Views" @change="updateChart()" autocomplete="off" :checked="type == 'Views'">
+                    <label class="btn btn-outline-dark me-2" for="views">Views</label>
                 
                     <input type="radio" v-model="type" class="btn-check" name="btnradio" id="likes" value="Likes" @change="updateChart()" autocomplete="off" :checked="type == 'Likes'">
-                    <label class="btn btn-outline-primary" for="likes">Likes</label>
+                    <label class="btn btn-outline-dark mx-2" for="likes">Likes</label>
                 
                     <input type="radio" v-model="type" class="btn-check" name="btnradio" id="dislikes" value="Dislikes" @change="updateChart()" autocomplete="off" :checked="type == 'Dislikes'">
-                    <label class="btn btn-outline-primary" for="dislikes">Dislikes</label>
+                    <label class="btn btn-outline-dark mx-2" for="dislikes">Dislikes</label>
 
                     <input type="radio" v-model="type" class="btn-check" name="btnradio" id="comments" value="Comments" @change="updateChart()" autocomplete="off" :checked="type == 'Comments'">
-                    <label class="btn btn-outline-primary" for="comments">Comments</label>
+                    <label class="btn btn-outline-dark mx-2" for="comments">Comments</label>
                 </div>
             </div>
                 
@@ -85,12 +85,12 @@
             <h4 class="d-inline px-2">By</h4>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group" ></div>
                 <input type="radio" class="btn-check" name="trend" id="counts" value="count" @change="makechart()" v-model="n" checked>
-                <label class="btn btn-outline-primary" for="counts">Count</label>
+                <label class="btn btn-outline-dark" for="counts">Count</label>
                 
                 &nbsp; <strong>or</strong> &nbsp;
             
                 <input type="radio" class="btn-check" name="trend" id="trendviews" value="views" @change="makechart()" v-model="n">
-                <label class="btn btn-outline-primary" for="trendviews">Views</label>
+                <label class="btn btn-outline-dark" for="trendviews">Views</label>
                 </br></br>
                 <div id="trending_by_count"></div>
             </div>

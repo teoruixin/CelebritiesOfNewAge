@@ -57,7 +57,7 @@ const app2 = Vue.createApp({
             // This one maps Category to a colour.
             const colour = d3.scaleOrdinal()
                 .domain(data.map(d => d.category))
-                .range(d3.schemeTableau10)
+                .range(d3.schemeSet3)
         
             // Add the x-axis.
             graph.append("g")

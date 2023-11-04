@@ -328,6 +328,26 @@ const app = Vue.createApp({
                     .attr("width", boxWidth )
                     .attr("stroke", "black")
                     .style("fill", "#69b3a2")
+                // Interaction
+                .on("mouseover", function(event, d){
+                Tooltip
+                .style("opacity", 1)
+                d3.select(this)
+                .style("stroke", "black")
+                .style("opacity", 1)
+                
+                })
+                .on("mousemove", function(event, d){
+                    Tooltip
+                    .html("<b>Max: </b>" + d[1].max.toFixed(2) +"<br><b>Min: </b>" + d[1].min.toFixed(2) + "<br><b>Q1: </b>" + d[1].q1.toFixed(2) + "<br><b>Median: </b>" + d[1].median.toFixed(2) + "<br><b>Q3: </b>" + d[1].q3.toFixed(2))
+                    .style("left", (event.pageX+20) + 'px')
+                    .style("top", (event.pageY+20) + 'px')
+                })
+            
+                .on("mouseout", function(event, d){
+                    Tooltip
+                    .style("opacity", 0)
+                })
         
             // // Show the median
             svg

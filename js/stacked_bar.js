@@ -26,7 +26,7 @@ const app3 = Vue.createApp({
         /******** Make Chart ********/
         makeChart(data) {
             // Create a color scale for different countries
-            color = d3.scaleOrdinal(d3.schemeCategory10);
+            color = d3.scaleOrdinal(d3.schemeSet3);
         
             // Calculate the maximum total count for any Youtuber
             var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
