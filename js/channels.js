@@ -104,11 +104,10 @@ const app = Vue.createApp({
                 .attr("width", 15)
                 .attr("height", 10)
                 .attr("class", "legend-color")
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", 10)
-                .attr("height", 10)
+                .append("circle")
+                .attr("cx", 5)
+                .attr("cy", 5)
+                .attr("r", 5)
                 .attr("fill", (d) => d[2]);
 
             legend.append("span")

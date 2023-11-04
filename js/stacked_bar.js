@@ -352,10 +352,22 @@ const app3 = Vue.createApp({
 
             data[0].countsByCountry.forEach(function (d) {
                 var legendItem = legend.append("div").attr("class", "legend-item");
-                legendItem
-                    .append("div")
-                    .attr("class", "legend-color")
-                    .style("background-color", color(d.country));
+                legendItem.append("svg")
+                
+            .attr("width", 10)
+            .attr("height", 15)
+            .attr("class", "legend-color")
+            .append("circle")
+            .attr("cx", 5)
+            .attr("cy", 8.5)
+            .attr("r", 5)
+            .attr("fill", color(d.country));
+
+                    // .append("div")
+                    // .attr("class", "legend-color")
+                    // .style("background-color", color(d.country))
+                    // .style("border-radius", "50%");
+                    
                 legendItem
                     .append("div")
                     .text(d.country)
