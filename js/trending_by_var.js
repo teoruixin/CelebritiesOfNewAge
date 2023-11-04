@@ -107,13 +107,32 @@ const app2 = Vue.createApp({
                 .style("opacity", 1)
             }
 
-            var selection = d=> this.n == "count" ? d.count: d.views
-            var btnselect = this.n == "count" ? "Count" : "Views" 
+            var selection = d=> this.n == "count" ? d.count: d.views;
+            var btnselect = this.n == "count" ? "Count" : "Views";
+
+            // Format count/views number to be compact "K", "M", "B" etc.
+            let options = {
+                notation: "compact",
+                compactDisplay: "short",
+            };
+            function formatCmpctNumber(number) {
+                const usformatter = Intl.NumberFormat("en-US", options);
+                return usformatter.format(number);
+            }
+
+            // Convert date into MM/YYYY format
+            function dateConverter(date) {
+                let curDate = new Date(date)
+                let month = String(curDate.getMonth() + 1).padStart(2, '0')
+                let year = curDate.getFullYear()
+                return month + "/" + year
+            }
+
             var mousemove = function(event, d){ 
                 tooltip
                 .html("<strong>" + "Category: " + "</strong>" + d.category + "<br>" +
-                    "<strong>" + "Year: " + "</strong>" + xscale(d.date) + "<br>" +
-                        "<strong>" + btnselect + ": </strong>" + selection(d))
+                        "<strong>" + "Date (MM/YYYY): " + "</strong>" + dateConverter(d.date) + "<br>" +
+                        "<strong>" + btnselect + ": </strong>" + formatCmpctNumber(selection(d)))
                 .style("left", event.x+20 + "px")
                 .style("top", event.y+20 + "px")
             }
@@ -305,6 +324,7 @@ const app2 = Vue.createApp({
         },
 
         makechart() {
+            var removeCatList = ["Autos & Vehicles", "Education", "Pets & Animals", "Movies", "Howto & Style", "News & Politics", "Science & Technology", "Shows", "Travel & Events"]
             // Import data
             d3.csv("data/trending_summary/CA_summary.csv", (row, i) => {
                 return {
@@ -318,6 +338,7 @@ const app2 = Vue.createApp({
             }).then(data => {
                 // filter out category "29" (can't find any information on it)
                 data = data.filter(row => row.category !== "29");
+                data = data.filter(row => !removeCatList.includes(row.category));
 
                 // Dataset is actually two datasets, from 2017-2018 and 2020 to 2023.
                 // We need to know the % of dates in set 1 and % of dates in set 2.
