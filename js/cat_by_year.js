@@ -5,7 +5,7 @@ await d3.csv("data/Global YouTube Statistics.csv", (row, i) => {
     return {
         category: row.category,
         youtuber: row.Youtuber,
-        created_year: row.created_year,
+        created_year: row.created_year, // Convert to string,
         // created_month: row.created_month,
         // created_date: row.created_date
     };
@@ -13,6 +13,8 @@ await d3.csv("data/Global YouTube Statistics.csv", (row, i) => {
     // filter out NaNs, then rows where the year is before 2005 (Youtube started)
     rows = rows.filter(row => row.category !== "nan" && row.created_year !== "nan");
     rows = rows.filter(row => row.created_year >= 2005);
+    rows = rows.filter(row => !["Autos & Vehicles", "Education", "Pets & Animals", "Movies", "Howto & Style", 
+    "News & Politics", "Science & Technology", "Shows", "Travel & Events"].includes(row.category));
 
     // count number of YouTubers per category per year
     var catCountsByYear = d3.flatRollup(
@@ -51,7 +53,7 @@ function cat_by_created_year(data) {
     const width = 1000;
     const height = 500;
     const marginTop = 20;
-    const marginRight = 20;
+    const marginRight = 50;
     const marginBottom = 30;
     const marginLeft = 80;
 
@@ -80,12 +82,30 @@ function cat_by_created_year(data) {
     graph.append("g")
         // translate() takes in axis starting point (x,y). 0,0 is the top left. margins are specified in const x above, so start at 0.
         .attr("transform", `translate(0, ${height - marginBottom})`)
-        .call(d3.axisBottom(xscale));
+        .call(d3.axisBottom(xscale)
+            .tickFormat(d3.format("d")) // Format as integers
+        )
+        .append("text")
+            .text("Year")
+            .attr("x", width - 15)
+            .attr("dy", 3)
+            .style("text-anchor", "end")
+            .style("fill", "black")
+            .style("font-size", "13px")
+            .style("font-weight", "bold");;
 
     // Add the y-axis. This is vertical that starts at 0,0 (top left) and goes downwards.
     graph.append("g")
         .attr("transform", `translate(${marginLeft},0)`)
-        .call(d3.axisLeft(yscale));
+        .call(d3.axisLeft(yscale))
+        .append("text")
+            .text("No. of Channels")
+            .attr("y", 10)
+            .attr("dx", 45)
+            .style("text-anchor", "end")
+            .style("fill", "black")
+            .style("font-size", "13px")
+            .style("font-weight", "bold");;
 
     // Plot points.
     graph.selectAll('circle')
