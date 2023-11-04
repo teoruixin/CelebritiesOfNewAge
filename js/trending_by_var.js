@@ -86,14 +86,56 @@ const app2 = Vue.createApp({
                     .style("font-size", "13px")
                     .style("font-weight", "bold");
             
+            // Create Tooltip
+            var tooltip = d3.select("#trending_by_count")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("position", "fixed")
+
+            // Three function that change the tooltip when user hover / move / leave a cell
+            var mouseover = function(event, d){ 
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+                tooltip
+                .style("opacity", 1)
+            }
+
+            var selection = d=> this.n == "count" ? d.count: d.views
+            var btnselect = this.n == "count" ? "Count" : "Views" 
+            var mousemove = function(event, d){ 
+                tooltip
+                .html("<strong>" + "Category: " + "</strong>" + d.category + "<br>" +
+                    "<strong>" + "Year: " + "</strong>" + xscale(d.date) + "<br>" +
+                        "<strong>" + btnselect + ": </strong>" + selection(d))
+                .style("left", event.x+20 + "px")
+                .style("top", event.y+20 + "px")
+            }
+
+            var mouseleave = function(event, d){ 
+                d3.select(this)
+                .style("stroke", "none")
+                tooltip
+                .style("opacity", 0)
+            }
+
             // Plot points.
             graph.selectAll('circle')
                 .data(data)
                 .join('circle')
-                .attr('r', 2.5)
+                .attr('r', 4)
                 .attr('cx', d => xscale(d.date))
                 .attr('cy', d => yscale(this.n == "count" ? d.count : d.views))
-                .attr('fill', d => colour(d.category));
+                .attr('fill', d => colour(d.category))
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
         
             // Plot lines.
             // 1) Group data
