@@ -74,7 +74,7 @@ const app = Vue.createApp({
         getEarlyData(country, month, type){
             categories= this.categories
             
-            d3.csv("data/awc_early/" + country + ".csv", (row, i) => {
+            d3.csv("data/trending_2018/" + country + ".csv", (row, i) => {
                 if (type=="Views"){
                     return {
                         category: row.category,
@@ -143,7 +143,7 @@ const app = Vue.createApp({
         getLateData(country, month, type){
             categories= this.categories
 
-            d3.csv("data/awc_late/"+ country + ".csv", (row, i) => {
+            d3.csv("data/trending_2020/"+ country + ".csv", (row, i) => {
                 if (type=="Views"){
                     return {
                         category: row.category,
@@ -588,7 +588,7 @@ const app = Vue.createApp({
     created() {
         categories= this.categories
 
-        d3.csv("data/awc_early/US.csv", (row, i) => {
+        d3.csv("data/trending_2018/US.csv", (row, i) => {
             return {
                 category: row.category,
                 title: row.title,
@@ -618,7 +618,7 @@ const app = Vue.createApp({
             console.log(error);
         });
 
-        d3.csv("data/awc_late/US.csv", (row, i) => {
+        d3.csv("data/trending_2022/US.csv", (row, i) => {
             return {
                 category: row.category,
                 title: row.title,
