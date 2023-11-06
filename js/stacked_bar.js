@@ -88,16 +88,6 @@ const app3 = Vue.createApp({
                     totalCount += countByCountry.count;
                 }
             }
-            // // Add bars for each country
-            // enter.selectAll("rect")
-            //   .data(d => d.countsByCountry)
-            //   .enter()
-            //   .append("rect")
-            //   .attr("fill", (d) => color(d.country))
-            //   .attr("x", 120)
-            //   .attr("y", 0)
-            //   .attr("width", (d) => x(d.count))
-            //   .attr("height", y.bandwidth());
 
             xAxis = d3.axisBottom()
                 .scale(x);
@@ -168,7 +158,6 @@ const app3 = Vue.createApp({
         // Update the chart with filtered data based on the selected date
         updateChart(date) {
             const transition_time = 1000;
-            // var tgtDate = this.selectedDate;
             var data = this.allData.get(date);
 
             // Calculate the maximum total count for any Youtuber
@@ -208,7 +197,6 @@ const app3 = Vue.createApp({
                     .scale(y)
             );
 
-            // time to die
             // curData is current chart data;       data is new data
             // format of data is an array of objects:
             // [ {youtuber: name, countsByCountry: [{country: CA, count: 57}, {country: IN, count: 57}] },
@@ -355,9 +343,9 @@ const app3 = Vue.createApp({
                         .attr("width", oldX(countByCountry.count) - this.marginLeft)
                         .attr("height", y.bandwidth())
                         .attr("opacity", 1)
+                        // transition away
                         .transition()
                         .duration(transition_time)
-                        // .attr("y", y(row.youtuber))
                         .attr("opacity", 0);
 
                     totalCount += countByCountry.count;

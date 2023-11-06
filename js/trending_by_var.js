@@ -24,9 +24,6 @@ const app2 = Vue.createApp({
             const filled_width = (width - marginRight - marginLeft) * (1-blank_perc);
             const pre_split_last_px = (split_info.pre_split_perc * filled_width) + marginLeft;
             const post_split_first_px = width - marginRight - (split_info.post_split_perc * filled_width);
-            // console.log(pre_split_last_px, post_split_first_px);
-            // console.log("diff:", post_split_first_px - pre_split_last_px);
-            // console.log("blank:", blank_perc * (width - marginRight - marginLeft))
         
             // Create the SVG container, here named "graph". Specify size in width and height above ^
             var graph = d3.create("svg")
@@ -34,7 +31,7 @@ const app2 = Vue.createApp({
                 .attr("height", height);
         
             // Declare the x scale. 
-            const xscale = d3.scaleUtc() // .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)]).range([marginLeft, width - marginRight]);
+            const xscale = d3.scaleUtc() 
                 .domain([
                     d3.min(data, d => d.date), 
                     split_info.pre_split_max, 
@@ -359,12 +356,6 @@ const app2 = Vue.createApp({
                     post_split_dates.push(record["date"]);
                 }
                 const post_split_min = Math.min(...post_split_dates);
-
-                // console.log("pre_split_n: ", pre_split_dates)
-                // console.log("pre_split_max: ", pre_split_max)
-
-                // console.log("post_split_n: ", post_split_dates)
-                // console.log("post_split_min: ", post_split_min)
 
                 const pre_split_len = pre_split_dates.length;
                 const post_split_len = post_split_dates.length;
