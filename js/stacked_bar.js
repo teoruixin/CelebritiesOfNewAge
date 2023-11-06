@@ -17,6 +17,7 @@ var yAxis;
 const app3 = Vue.createApp({
     data() {
         return {
+            countryColorMap: { "CA": null, "DE": null, "FR": null, "GB": null, "IN": null, "JP": null, "MX": null, "US": null, "RU": null, "KR": null },
             chartWidth: 800,
             chartHeight: 400,
             selectedDate: null,
@@ -32,9 +33,6 @@ const app3 = Vue.createApp({
             // Get data
             let data = this.allData.get(date);
             this.curData = data;
-
-            // Create a color scale for different countries
-            color = d3.scaleOrdinal(d3.schemePaired);
 
             // Calculate the maximum total count for any Youtuber
             var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
@@ -77,7 +75,7 @@ const app3 = Vue.createApp({
                 for (countByCountry of row.countsByCountry) {
                     d3.select('.chart')
                         .append("rect")
-                        .attr("fill", color(countByCountry.country))
+                        .attr("fill", this.countryColorMap[countByCountry.country])
                         .attr("x", x(totalCount))
                         .attr("y", y(row.youtuber))
                         .attr("width", x(countByCountry.count) - 120)
@@ -268,7 +266,7 @@ const app3 = Vue.createApp({
                 for (countByCountry of row.countsByCountry) {
                     d3.select('.chart')
                         .append("rect")
-                        .attr("fill", color(countByCountry.country))
+                        .attr("fill", this.countryColorMap[countByCountry.country])
                         .attr("x", x(totalCount))
                         // .attr("y", y(row.youtuber))
                         .attr("y", this.chartHeight)
@@ -324,7 +322,7 @@ const app3 = Vue.createApp({
                     // generate old chart
                     d3.select('.chart')
                         .append("rect")
-                        .attr("fill", color(curCountry))
+                        .attr("fill", this.countryColorMap[curCountry])
                         .attr("x", oldX(totalCountOld))
                         .attr("y", oldY(row.youtuber))
                         .attr("width", oldX(oldCount) - 120)
@@ -352,7 +350,7 @@ const app3 = Vue.createApp({
                 for (countByCountry of row.countsByCountry) {
                     d3.select('.chart')
                         .append("rect")
-                        .attr("fill", color(countByCountry.country))
+                        .attr("fill", this.countryColorMap[countByCountry.country])
                         .attr("x", oldX(totalCount))
                         .attr("y", oldY(row.youtuber))
                         // .attr("y", this.chartHeight)
@@ -373,42 +371,37 @@ const app3 = Vue.createApp({
         },
 
         /******** Create Legends ********/
-        createLegends(date) {
+        createLegends() {
             var legend = d3.select(".legend");
 
-            let data = this.allData.get(date);
+            // var countryList = [];
+            var legendItem;
+            for (let [key, val] of Object.entries(this.countryColorMap)) {
+                legendItem = legend.append("div").attr("class", "legend-item");
+                legendItem.append("svg")
+                    .attr("width", 10)
+                    .attr("height", 15)
+                    .attr("class", "legend-color")
+                    .append("circle")
+                    .attr("cx", 5)
+                    .attr("cy", 8.5)
+                    .attr("r", 5)
+                    .attr("fill", val);
 
-            var countryList = [];
-
-            data.forEach(function (channel) {
-                channel.countsByCountry.forEach(function (d) {
-                    if (countryList.indexOf(d.country) >= 0) {
-                        return;
-                    }
-
-                    var legendItem = legend.append("div").attr("class", "legend-item");
-                    legendItem.append("svg")
-                        .attr("width", 10)
-                        .attr("height", 15)
-                        .attr("class", "legend-color")
-                        .append("circle")
-                        .attr("cx", 5)
-                        .attr("cy", 8.5)
-                        .attr("r", 5)
-                        .attr("fill", color(d.country));
-
-                    legendItem
-                        .append("div")
-                        .text(d.country)
-                        .style("font-size", "12px");
-
-                    countryList.push(d.country);
-                });
-            });
+                legendItem
+                    .append("div")
+                    .text(key)
+                    .style("font-size", "12px");
+            }
         },
     },
 
     created() {
+        color = d3.scaleOrdinal(d3.schemeSet3);
+        for (let [c, val] of Object.entries(this.countryColorMap)) {
+            this.countryColorMap[c] = color(c)
+        }
+
         d3.csv("data/merged.csv", (row, i) => {
             return {
                 date: row.month,
@@ -471,7 +464,7 @@ const app3 = Vue.createApp({
             });
 
             this.makeChart(date = "2017-11");
-            // this.createLegends(date = "2017-11");
+            this.createLegends();
         }).catch(error => {
             console.log(error);
         });
@@ -479,20 +472,3 @@ const app3 = Vue.createApp({
 
 })
 const stacked_bar = app3.mount("#app3")
-
-/******** Create Legends ********/
-function createLegends(data) {
-    var legend = d3.select(".legend");
-
-    data[0].countsByCountry.forEach(function (d) {
-        var legendItem = legend.append("div").attr("class", "legend-item");
-        legendItem
-            .append("div")
-            .attr("class", "legend-color")
-            .style("background-color", color(d.country));
-        legendItem
-            .append("div")
-            .text(d.country)
-            .style("font-size", "12px");
-    });
-}

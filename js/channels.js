@@ -3,10 +3,10 @@
 const app = Vue.createApp({
     data() {
         return {
+            countryColorMap: {"Canada": null, "Germany": null, "France": null, "United Kingdom": null, "India": null, "Japan": null, "Mexico": null, "United States": null, "Russia": null, "South Korea": null, "Brazil": null, "Others": null},
+            legendColorMap: [], // extraCountryColorMap: {"Brazil", "Indonesia", "Spain", "Thailand", "Argentina", "Colombia", "Others"]},
             data: [],               // Stores all data
             data_top: [],           // Stores top youtuber data
-            legend_data: [],        // Stores all country => colour mapping
-            legend_data_top: [],    // Stores country => colour mapping for countries in data_top
             xAxis: null,
             yAxis: null,
             criteria: {             // Stores filter criteria
@@ -94,12 +94,12 @@ const app = Vue.createApp({
             }
 
             // Generate legend data for top 20 countries
-            this.legend_data_top = this.legend_data.filter(entry => countries.indexOf(entry[0]) != -1)
+            var legend_data_top = this.legendColorMap.filter(entry => countries.indexOf(entry[0]) != -1 || entry[0] == "Others")
 
             // // Display the legend
             var legend = d3.select(".legend")
                 .selectAll(".legend-entry")
-                .data(this.legend_data_top, d => d[0])
+                .data(legend_data_top, d => d[0])
                 .enter()
                 .append("div")
                 .attr("class", "legend-entry");
@@ -112,7 +112,7 @@ const app = Vue.createApp({
                 .attr("cx", 5)
                 .attr("cy", 5)
                 .attr("r", 5)
-                .attr("fill", (d) => d[2]);
+                .attr("fill", (d) => d[1]);
 
             legend.append("span")
                 .attr("class", "legend-text")
@@ -633,13 +633,22 @@ const app = Vue.createApp({
     }, // methods
 
     mounted() {
-        var countryColors = d3.scaleOrdinal(d3.schemePaired);
+        const color = d3.scaleOrdinal(d3.schemeSet3);
+        for (let [c, val] of Object.entries(this.countryColorMap)) {
+            this.countryColorMap[c] = color(c);
+            this.legendColorMap.push([c, color(c)]);
+        }
 
         d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
-            const countriesToInclude = ["United States", "India", "Brazil",
-                "United Kingdom", "Mexico", "Indonesia", "Spain", "Thailand", "South Korea",
-                "Russia", "Canada"]; // , "Argentina", "Colombia", "Japan"];
-
+            const countriesToInclude = ["Canada", "Germany", "France", "United Kingdom", "India", "Japan", "Mexico", "United States", "Russia", "South Korea", "Brazil", "Indonesia", "Spain", "Thailand", "Argentina", "Colombia", "Others"]
+            
+            // ["United States", "India", "Brazil",
+            //     "United Kingdom", "Mexico", "Indonesia", "Spain", "Thailand", "South Korea",
+            //     "Russia", "Canada"]; // , "Argentina", "Colombia", "Japan"];
+                // ["Canada", "United Kingdom", "India", "Mexico",  "United States", "Russia", "South Korea", "Others"]
+                // ["Brazil", "Indonesia", "Spain", "Thailand"]
+                // ["Germany", "France", "Japan"]
+                //  {"Canada": null, "Germany": null, "France": null, "United Kingdom": null, "India": null, "Mexico": null, "United States": null, "Russia": null, "South Korea": null, "Others": null},
             const categoriestoExclude = ["Autos & Vehicles", "Education", "Pets & Animals",
                 "Movies", "Howto & Style", "News & Politics", "Science & Technology", "Shows",
                 "Travel & Events", "Trailers", "Nonprofits & Activism"];
@@ -659,31 +668,32 @@ const app = Vue.createApp({
 
             // Add colours for country
             // Group data by country
-            var groupedData = d3.group(rows, d => d.country);
+            // var groupedData = d3.group(rows, d => d.country);
 
-            // Calculate total subscribers for each country
-            var countrySubscribers = new Map();
-            groupedData.forEach((group, country) => {
-                var totalSubscribers = d3.sum(group, d => d.subscribers);
-                countrySubscribers.set(country, totalSubscribers);
-            });
+            // // // Calculate total subscribers for each country
+            // var countrySubscribers = new Map();
+            // groupedData.forEach((group, country) => {
+            //     var totalSubscribers = d3.sum(group, d => d.subscribers);
+            //     countrySubscribers.set(country, totalSubscribers);
+            // });
 
-            // Sort countries by total subscribers in descending order
-            var topCountries = Array.from(countrySubscribers)
-                .sort((a, b) => b[1] - a[1]);
+            // // Sort countries by total subscribers in descending order
+            // var topCountries = Array.from(countrySubscribers)
+            //     .sort((a, b) => b[1] - a[1]);
 
-            // Assign colors to countries
-            topCountries.forEach((country, i) => {
-                country[1] = i;
-                country[2] = countryColors(i);
-            });
+            // // Assign colors to countries
+            // topCountries.forEach((country, i) => {
+            //     country[1] = i;
+            //     country[2] = "#000000";
+            // });
 
-            this.legend_data = topCountries;
-            var countryColorsDict = Object.assign({}, ...topCountries.map((x) => ({ [x[0]]: x[2] })));
+            // this.legend_data = topCountries;
+            // var countryColorsDict = Object.assign({}, ...topCountries.map((x) => ({ [x[0]]: x[2] })));
             // {"USA": "#000000", India: "#01FF01", ...}
 
             // Add colour to rows based on country
-            rows.forEach(youtuber => youtuber.color = countryColorsDict[youtuber.country]);
+            var country_list = ["Canada", "Germany", "France", "United Kingdom", "India", "Japan", "Mexico", "United States", "Russia", "South Korea", "Brazil"]
+            rows.forEach(youtuber => youtuber.color = country_list.indexOf(youtuber.country) >= 0 ? this.countryColorMap[youtuber.country] : this.countryColorMap["Others"]);
 
             // Record data
             this.data = rows;
