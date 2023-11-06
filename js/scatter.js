@@ -50,19 +50,19 @@ function makeChart(data) {
         return !isNaN(d.viewsDays);
     });
 
-    // y position
-    y = d3.scaleLinear()
-        .domain(d3.extent(allData, function (d) { return d.viewsDays; }))
-        .range([chartHeight - 75, 50]);
-
     // x position
     x = d3.scaleLinear()
-        .domain(d3.extent(allData, function (d) { return d.AverageEarning; }))
+        .domain(d3.extent(allData, function (d) { return d.viewsDays; }))
         .range([150, chartWidth - 25]);
 
+    // y position
+    y = d3.scaleLinear()
+        .domain(d3.extent(allData, function (d) { return d.AverageEarning; }))
+        .range([chartHeight - 75, 50]);
+
     var canvas = d3.select("#scatter")
-        .style("width", chartWidth)
-        .style("height", chartHeight)
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
         .style("margin-top", -40)
         .style("margin-left", -40);
 
@@ -83,9 +83,9 @@ function makeChart(data) {
     //ENTER
     var enter = scatter.enter().append("circle")
         .attr("fill-opacity", 0)
-        .attr("cx", function (d) { return x(d.AverageEarning); })
-        .attr("cy", function (d) { return y(d.viewsDays); })
-        .attr("r", function (d) { return 5; })
+        .attr("cy", function (d) { return y(d.AverageEarning); })
+        .attr("cx", function (d) { return x(d.viewsDays); })
+        .attr("r", 5)
         .attr("stroke", "#1f78b4")
         .attr("stroke-width", "1px")
         .on("mouseover", function (event, d) {
@@ -116,14 +116,16 @@ function makeChart(data) {
 
     //ENTER + UPDATE
     enter.merge(scatter)
-        .attr("cx", function (d) { return x(d.AverageEarning); })
-        .attr("cy", function (d) { return y(d.viewsDays); });
+        .attr("cy", function (d) { return y(d.AverageEarning); })
+        .attr("cx", function (d) { return x(d.viewsDays); });
 
     xAxis = d3.axisBottom()
-        .scale(x);
+        .scale(x)
+        .tickFormat(d => (d / 1000000000).toFixed(1) + "B"); // Display in billions;
 
     yAxis = d3.axisLeft()
-        .scale(y);
+        .scale(y)
+        .tickFormat(d => (d / 1000000).toFixed(0) + "M"); // Display in millions;;
 
     var yAxisGroup = canvas.append("g")
         .attr("class", "axis")
@@ -147,7 +149,7 @@ function makeChart(data) {
         .attr("text-anchor", "middle")
         .attr("x", chartWidth / 2 + 60)
         .attr("y", chartHeight - 30)
-        .text("Average Monthly Income")
+        .text("Video Views for the Last 30 Days")
         .attr("font-size", "13px")
         .style("font-weight", "bold");
 
@@ -157,7 +159,7 @@ function makeChart(data) {
         .attr("x", 60)
         .attr("y", chartHeight / 2 + 35)
         .attr("transform", "rotate(-90 30," + (chartHeight / 2) + ")")
-        .text("Video Views for the Last 30 Days")
+        .text("Average Monthly Income")
         .attr("font-size", "13px")
         .style("font-weight", "bold");
 }
