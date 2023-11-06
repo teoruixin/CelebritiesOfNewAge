@@ -339,7 +339,6 @@ const app3 = Vue.createApp({
                 }
             }
 
-
             // Update this.curData
             this.curData = data;
         },
@@ -350,24 +349,34 @@ const app3 = Vue.createApp({
 
             let data = this.allData.get(date);
 
-            data[0].countsByCountry.forEach(function (d) {
-                var legendItem = legend.append("div").attr("class", "legend-item");
-                legendItem.append("svg")
-                    .attr("width", 10)
-                    .attr("height", 15)
-                    .attr("class", "legend-color")
-                    .append("circle")
-                    .attr("cx", 5)
-                    .attr("cy", 8.5)
-                    .attr("r", 5)
-                    .attr("fill", color(d.country));
+            var countryList = [];
 
-                legendItem
-                    .append("div")
-                    .text(d.country)
-                    .style("font-size", "12px");
+            data.forEach(function (channel) {
+                channel.countsByCountry.forEach(function (d) {
+                    if (countryList.indexOf(d.country) >= 0) {
+                        return;
+                    }
+
+                    var legendItem = legend.append("div").attr("class", "legend-item");
+                    legendItem.append("svg")
+                        .attr("width", 10)
+                        .attr("height", 15)
+                        .attr("class", "legend-color")
+                        .append("circle")
+                        .attr("cx", 5)
+                        .attr("cy", 8.5)
+                        .attr("r", 5)
+                        .attr("fill", color(d.country));
+
+                    legendItem
+                        .append("div")
+                        .text(d.country)
+                        .style("font-size", "12px");
+
+                    countryList.push(d.country);
+                });
             });
-        }
+        },
     },
 
     created() {
