@@ -18,7 +18,7 @@ const app = Vue.createApp({
                 width: 700,
                 height: 400,
                 marginTop: 10,
-                marginRight: 10,
+                marginRight: 25,
                 marginBottom: 20,
                 marginLeft: 150,
             },

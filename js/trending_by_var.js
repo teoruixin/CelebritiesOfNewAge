@@ -131,7 +131,7 @@ const app2 = Vue.createApp({
             var mousemove = function(event, d){ 
                 tooltip
                 .html("<strong>" + "Category: " + "</strong>" + d.category + "<br>" +
-                        "<strong>" + "Date (MM/YYYY): " + "</strong>" + dateConverter(d.date) + "<br>" +
+                        "<strong>" + "Date (M/Y): " + "</strong>" + dateConverter(d.date) + "<br>" +
                         "<strong>" + btnselect + ": </strong>" + formatCmpctNumber(selection(d)))
                 .style("left", event.x+20 + "px")
                 .style("top", event.y+20 + "px")
@@ -148,7 +148,7 @@ const app2 = Vue.createApp({
             graph.selectAll('circle')
                 .data(data)
                 .join('circle')
-                .attr('r', 4)
+                .attr('r', 5)
                 .attr('cx', d => xscale(d.date))
                 .attr('cy', d => yscale(this.n == "count" ? d.count : d.views))
                 .attr('fill', d => colour(d.category))

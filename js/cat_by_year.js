@@ -125,7 +125,7 @@ function cat_by_created_year(data) {
         .data(data)
         .join('circle')
         // .attr('opacity', 0.75)
-        .attr('r', 4)
+        .attr('r', 5)
         .attr('cx', d => xscale(d.year))
         .attr('cy', d => yscale(d.count))
         .attr('fill', d => colour(d.category))
@@ -143,7 +143,7 @@ function cat_by_created_year(data) {
         })
         .on("mousemove", function(event, d){
             Tooltip
-            .html("<b>Catetory: </b>" + d.category + "<br><b>Year: </b>" + d.year + "<br><b>Count: </b>" + d.count)
+            .html("<b>Category: </b>" + d.category + "<br><b>Year: </b>" + d.year + "<br><b>Channels: </b>" + d.count)
             .style("left", (event.pageX+20) + 'px')
             .style("top", (event.pageY+20) + 'px')
         })
