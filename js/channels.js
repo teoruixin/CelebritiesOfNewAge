@@ -53,7 +53,7 @@ const app = Vue.createApp({
             return
         },
         rm_from_list(target, idx, delay) {
-            this.criteria[target].splice(idx,1);
+            this.criteria[target].splice(idx, 1);
             if (delay) {
                 return;
             }
@@ -294,25 +294,25 @@ const app = Vue.createApp({
                         // then remove().
                         .remove()
                 );
-            
+
             this.barChart
-                    .selectAll(".count-label")
+                .selectAll(".count-label")
                 .data(this.data_top, d => d.youtuber)
                 .join(
                     enter => enter
-                    .append("text")
-                    .attr("class", "count-label")
-                    .attr("x", (d) => x(d.subscribers) + 5)
-                    .attr("y", height - marginBottom)
-                    .text((d) => (d.subscribers / 1000000).toFixed(2) + "M") // Display subscribers in millions
-                    .style("font-size", "12px")
-                    .style("fill", "black")
-                    .style("text-anchor", "start")
-                    .attr("opacity", 0)
-                    .transition()
-                    .duration(transition_time)
-                    .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5)
-                    .attr('opacity', 1),
+                        .append("text")
+                        .attr("class", "count-label")
+                        .attr("x", (d) => x(d.subscribers) + 5)
+                        .attr("y", height - marginBottom)
+                        .text((d) => (d.subscribers / 1000000).toFixed(2) + "M") // Display subscribers in millions
+                        .style("font-size", "12px")
+                        .style("fill", "black")
+                        .style("text-anchor", "start")
+                        .attr("opacity", 0)
+                        .transition()
+                        .duration(transition_time)
+                        .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5)
+                        .attr('opacity', 1),
 
                     update => update
                         // Declare transition to final position
@@ -320,7 +320,7 @@ const app = Vue.createApp({
                         .duration(transition_time)
                         .attr("x", (d) => x(d.subscribers) + 5)
                         .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5),
-                        
+
                     exit => exit
                         // Declare transition to final position
                         .transition()
@@ -631,11 +631,19 @@ const app = Vue.createApp({
         var countryColors = d3.scaleOrdinal(d3.schemeSet3);
 
         d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
+            const countriesToInclude = ["United States", "India", "Brazil",
+                "United Kingdom", "Mexico", "Indonesia", "Spain", "Thailand", "South Korea",
+                "Russia", "Canada"]; // , "Argentina", "Colombia", "Japan"];
+
+            const categoriestoExclude = ["Autos & Vehicles", "Education", "Pets & Animals",
+                "Movies", "Howto & Style", "News & Politics", "Science & Technology", "Shows",
+                "Travel & Events", "Trailers", "Nonprofits & Activism"];
+
             return {
                 youtuber: row.Youtuber,
                 subscribers: +row.subscribers,
-                country: row.Country,
-                category: row.category
+                country: countriesToInclude.indexOf(row.Country) >= 0 ? row.Country : "Other",
+                category: categoriestoExclude.indexOf(row.category) < 0 ? row.category : "Other"
             };
         }).then(rows => {
             // Filter out "nan" country
