@@ -35,7 +35,7 @@ const app3 = Vue.createApp({
 
             // Create a color scale for different countries
             color = d3.scaleOrdinal(d3.schemeSet3);
-        
+
             // Calculate the maximum total count for any Youtuber
             var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
 
@@ -277,10 +277,10 @@ const app3 = Vue.createApp({
                     oldCountryIdx = curCountryList.findIndex(e => e.country === oldCountry.country);
                     if (oldCountryIdx < 0) {
                         console.log("insert:", oldCountry, oldCountryIdx)
-                        curCountryList.splice(idx, 0, {country: oldCountry.country, count: 0})
+                        curCountryList.splice(idx, 0, { country: oldCountry.country, count: 0 })
                         console.log(curCountryList)
                     }
-                    idx ++;
+                    idx++;
                 }
                 // loop over countsByCountry. Draw rectangle, add to starting x
                 for (countByCountry of curCountryList) {
@@ -353,21 +353,15 @@ const app3 = Vue.createApp({
             data[0].countsByCountry.forEach(function (d) {
                 var legendItem = legend.append("div").attr("class", "legend-item");
                 legendItem.append("svg")
-                
-            .attr("width", 10)
-            .attr("height", 15)
-            .attr("class", "legend-color")
-            .append("circle")
-            .attr("cx", 5)
-            .attr("cy", 8.5)
-            .attr("r", 5)
-            .attr("fill", color(d.country));
+                    .attr("width", 10)
+                    .attr("height", 15)
+                    .attr("class", "legend-color")
+                    .append("circle")
+                    .attr("cx", 5)
+                    .attr("cy", 8.5)
+                    .attr("r", 5)
+                    .attr("fill", color(d.country));
 
-                    // .append("div")
-                    // .attr("class", "legend-color")
-                    // .style("background-color", color(d.country))
-                    // .style("border-radius", "50%");
-                    
                 legendItem
                     .append("div")
                     .text(d.country)
