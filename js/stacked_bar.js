@@ -133,33 +133,33 @@ const app3 = Vue.createApp({
             this.yAxis = yAxisGroup;
 
             // Add a legend
-            const legend = canvas.append("g")
-            .attr("transform", `translate(${this.chartWidth +10}, 10)`);
+            // const legend = canvas.append("g")
+            // .attr("transform", `translate(${this.chartWidth +10}, 10)`);
 
-            // Create a legend title
-            legend.append("text")
-                .text("Country")
-                .attr("dy", "0.35em")
-                .attr("font-weight", "bold")
-                .attr("font-size", "14px");
+            // // Create a legend title
+            // legend.append("text")
+            //     .text("Country")
+            //     .attr("dy", "0.35em")
+            //     .attr("font-weight", "bold")
+            //     .attr("font-size", "14px");
 
             // Create legend items
-            const countries = data[1].countsByCountry
-            // console.log(data[1].countsByCountry);
-            countries.forEach((country, index) => {
-                const legendItem = legend.append("g")
-                    .attr("transform", `translate(0, ${index * 13 + 20})`);
+            // const countries = data[1].countsByCountry
+            // // console.log(data[1].countsByCountry);
+            // countries.forEach((country, index) => {
+            //     const legendItem = legend.append("g")
+            //         .attr("transform", `translate(0, ${index * 13 + 20})`);
 
-                legendItem.append("circle")
-                    .attr("r", 4)
-                    .attr("fill", color(country.country));
+            //     legendItem.append("circle")
+            //         .attr("r", 4)
+            //         .attr("fill", color(country.country));
 
-                legendItem.append("text")
-                    .text(country.country)
-                    .attr("x", 10)
-                    .attr("dy", "0.32em")
-                    .attr("font-size", "12px");
-            });
+            //     legendItem.append("text")
+            //         .text(country.country)
+            //         .attr("x", 10)
+            //         .attr("dy", "0.32em")
+            //         .attr("font-size", "12px");
+            // });
         },
 
         // Update the chart with filtered data based on the selected date
@@ -374,6 +374,12 @@ const app3 = Vue.createApp({
         createLegends() {
             var legend = d3.select(".legend");
 
+            legend.append("text")
+                .text("Country")
+                .attr("dy", "0.35em")
+                .attr("font-weight", "bold")
+                .attr("font-size", "14px");
+                
             // var countryList = [];
             var legendItem;
             for (let [key, val] of Object.entries(this.countryColorMap)) {
