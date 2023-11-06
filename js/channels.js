@@ -209,7 +209,7 @@ const app = Vue.createApp({
                 .enter()
                 .append("text")
                 .attr("class", "count-label")
-                .attr("x", (d) => x(d.subscribers) + 5)
+                .attr("x", (d) => x(d.subscribers) <= width - 50 ? x(d.subscribers) + 5 : x(d.subscribers) - 50)
                 .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5)
                 .text((d) => (d.subscribers / 1000000).toFixed(2) + "M") // Display subscribers in millions
                 .style("font-size", "12px")
@@ -302,7 +302,8 @@ const app = Vue.createApp({
                     enter => enter
                         .append("text")
                         .attr("class", "count-label")
-                        .attr("x", (d) => x(d.subscribers) + 5)
+                        .attr("x", (d) => x(d.subscribers) <= width - 50 ? x(d.subscribers) + 5 : x(d.subscribers) - 50)
+                        // .attr("x", (d) => x(d.subscribers) + 5)
                         .attr("y", height - marginBottom)
                         .text((d) => (d.subscribers / 1000000).toFixed(2) + "M") // Display subscribers in millions
                         .style("font-size", "12px")
@@ -318,7 +319,7 @@ const app = Vue.createApp({
                         // Declare transition to final position
                         .transition()
                         .duration(transition_time)
-                        .attr("x", (d) => x(d.subscribers) + 5)
+                        .attr("x", (d) => x(d.subscribers) <= width - 50 ? x(d.subscribers) + 5 : x(d.subscribers) - 50)
                         .attr("y", (d) => y(d.youtuber) + y.bandwidth() / 2 + 5),
 
                     exit => exit
