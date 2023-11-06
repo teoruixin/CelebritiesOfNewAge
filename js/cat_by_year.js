@@ -55,7 +55,7 @@ function cat_by_created_year(data) {
     const marginTop = 20;
     const marginRight = 50;
     const marginBottom = 30;
-    const marginLeft = 80;
+    const marginLeft = 60;
 
     // Create the SVG container, here named "graph". Specify size in width and height above ^
     const graph = d3.create("svg")
