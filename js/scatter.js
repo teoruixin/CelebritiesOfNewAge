@@ -70,15 +70,16 @@ function makeChart(data) {
         .data(data)
 
     //tooltip
-    var tooltip = d3.select("#scatter")
+    var tooltip = d3.select("#scatter_div")
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("background-color", "white")
         .style("border", "solid")
-        .style("border-width", "1px")
+        .style("border-width", "2px")
         .style("border-radius", "5px")
-        .style("padding", "10px")
+        .style("padding", "5px")
+        .style("position", "absolute")
 
     //ENTER
     var enter = scatter.enter().append("circle")
@@ -88,31 +89,54 @@ function makeChart(data) {
         .attr("r", 5)
         .attr("stroke", "#1f78b4")
         .attr("stroke-width", "1px")
-        .on("mouseover", function (event, d) {
-            d3.select(this).transition()
-                .attr("stroke-width", "5px")
-                .attr("r", 7);
-            tooltip.transition()
-                .duration(100)
-                .style("opacity", 1);
+        .on("mouseover", function(event, d){
+            tooltip
+            .style("opacity", 1)
+            d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)   
         })
-        .on("mouseout", function (event, d) {
-            d3.select(this).transition()
-                .attr("stroke-width", "1px")
-                .attr("r", 5);
+        .on("mousemove", function(event, d){
+            tooltip
+            .html("<b>Youtuber: </b>" + d.youtuber +"<br><b>Video views: </b>" + d.viewsDays + "<br><b>Average earnings: </b>" + d.AverageEarning)
+            .style("left", (event.pageX+20) + 'px')
+            .style("top", (event.pageY+20) + 'px')
+        })
+    
+        .on("mouseout", function(event, d){
+            d3.select(this)
+            .style("stroke", "#1f78b4")
+            tooltip
+            .style("opacity", 0)
+            
+        })
 
-            tooltip.transition()
-                .duration('200')
-                .style("opacity", 0);
-        });
+
+        // .on("mouseover", function (event, d) {
+        //     d3.select(this).transition()
+        //         .attr("stroke-width", "5px")
+        //         .attr("r", 7);
+        //     tooltip.transition()
+        //         .duration(100)
+        //         .style("opacity", 1);
+        // })
+        // .on("mouseout", function (event, d) {
+        //     d3.select(this).transition()
+        //         .attr("stroke-width", "1px")
+        //         .attr("r", 5);
+
+        //     tooltip.transition()
+        //         .duration('200')
+        //         .style("opacity", 0);
+        // });
 
     // Add a title to the point (on mouseover)
-    enter.append("svg:title")
-        .text(function (d) {
-            return "Youtuber: " + d.youtuber + "\n" +
-                "Video views: " + d.viewsDays + "\n" +
-                "Average earnings: " + d.AverageEarning + "\n"
-        });
+    // enter.append("svg:title")
+    //     .text(function (d) {
+    //         return "Youtuber: " + d.youtuber + "\n" +
+    //             "Video views: " + d.viewsDays + "\n" +
+    //             "Average earnings: " + d.AverageEarning + "\n"
+    //     });
 
     //ENTER + UPDATE
     enter.merge(scatter)

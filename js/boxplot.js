@@ -67,6 +67,7 @@ const app = Vue.createApp({
             country = this.selected_country
             month = this.selected_month
             type = this.type
+            d3.selectAll("#boxplot").selectAll("svg").remove()
             this.getEarlyData(country, month, type)
             this.getLateData(country, month, type)
         },
@@ -133,7 +134,7 @@ const app = Vue.createApp({
                 rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
                 
-                this.update(rows, country, month, "2018", "early")
+                this.makeChart(rows, country, month, "2018", "early")
                 
             }).catch(error => {
                 console.log(error);
@@ -202,7 +203,7 @@ const app = Vue.createApp({
                 rows = rows.filter(function(d) { return d.month == month && d.year == 2022; })
                 rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
-                this.update(rows, country, month, "2022", "late")
+                this.makeChart(rows, country, month, "2022", "late")
                 
             }).catch(error => {
                 console.log(error);
@@ -378,7 +379,7 @@ const app = Vue.createApp({
                     Tooltip
                     .style("opacity", 0)
                 })
-        
+            
             // // Show the median
             svg
                 .selectAll("medianLines")
@@ -455,7 +456,7 @@ const app = Vue.createApp({
                 .domain(data.map(d=> d.category))
                 .paddingInner(1)
                 .paddingOuter(.5)
-                
+
             xAxis = d3.axisBottom().scale(x).ticks(0);
         
             svg.selectAll(".xaxis").select(".xaxisTitle").remove()
@@ -484,8 +485,9 @@ const app = Vue.createApp({
                 .domain([0,10])
                 // .domain([0,d3.max(data, d => d.log)])
                 .range([height, 0])
-            svg.selectAll(".yaxis").call(d3.axisLeft(y))
-            svg.selectAll(".yaxis").select(".yaxisTitle").text(this.type +  " (Log)")
+            svg.selectAll(".yaxis")
+            .call(d3.axisLeft(y))
+            .select(".yaxisTitle").text(this.type +  " (Log)")
         
             // Show the main vertical line
             var lines = svg.selectAll("line").data(stats, key)
@@ -520,6 +522,8 @@ const app = Vue.createApp({
                 .style("width", 80)
         
             // Update box
+            svg.selectAll("rect").remove()
+            
             var boxes = svg.selectAll("rect").data(stats, key)
             boxes.exit().transition().duration(1000)
                 .attr("height", 0)
@@ -533,7 +537,27 @@ const app = Vue.createApp({
                 .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
                 .attr("width", boxWidth )
                 .attr("stroke", "black")
-                .style("fill", "#8dd3c7")
+                .attr("fill", "#a6cee3")
+                // Interaction
+                .on("mouseover", function(event, d){
+                    Tooltip
+                    .style("opacity", 1)
+                    d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+                    
+                })
+                .on("mousemove", function(event, d){
+                    Tooltip
+                    .html("<b>Max: </b>" + d[1].max.toFixed(2) +"<br><b>Min: </b>" + d[1].min.toFixed(2) + "<br><b>Q1: </b>" + d[1].q1.toFixed(2) + "<br><b>Median: </b>" + d[1].median.toFixed(2) + "<br><b>Q3: </b>" + d[1].q3.toFixed(2))
+                    .style("left", (event.pageX+20) + 'px')
+                    .style("top", (event.pageY+20) + 'px')
+                })
+            
+                .on("mouseout", function(event, d){
+                    Tooltip
+                    .style("opacity", 0)
+                })
         
             // Show the median
             lines.enter().append("line")
