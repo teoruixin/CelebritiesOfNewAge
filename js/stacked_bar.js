@@ -18,7 +18,7 @@ const app3 = Vue.createApp({
     data() {
         return {
             countryColorMap: { "CA": null, "DE": null, "FR": null, "GB": null, "IN": null, "JP": null, "MX": null, "US": null, "RU": null, "KR": null },
-            chartWidth: 800,
+            chartWidth: 1000,
             chartHeight: 400,
             marginTop: 10,
             marginRight: 25,
@@ -54,7 +54,7 @@ const app3 = Vue.createApp({
                 .padding(0.2);
 
             var canvas = d3.select(".chart")
-                .attr("width", this.chartWidth)
+                .attr("width", this.chartWidth + 200)
                 .attr("height", this.chartHeight)
                 .attr("transform", "translate(0," + -10 + ")");
 
@@ -137,32 +137,32 @@ const app3 = Vue.createApp({
             this.yAxis = yAxisGroup;
 
             // Add a legend
-            // const legend = canvas.append("g")
-            // .attr("transform", `translate(${this.chartWidth +10}, 10)`);
+            const legend = canvas.append("g")
+            .attr("transform", `translate(${this.chartWidth +10}, 10)`);
 
-            // // Create a legend title
-            // legend.append("text")
-            //     .text("Country")
-            //     .attr("dy", "0.35em")
-            //     .attr("font-weight", "bold")
-            //     .attr("font-size", "14px");
+            // Create a legend title
+            legend.append("text")
+                .text("Country")
+                .attr("dy", "0.35em")
+                .attr("font-weight", "bold")
+                .attr("font-size", "14px");
 
             // Create legend items
-            // const countries = data[1].countsByCountry
-            // countries.forEach((country, index) => {
-            //     const legendItem = legend.append("g")
-            //         .attr("transform", `translate(0, ${index * 13 + 20})`);
+            const countries = data[1].countsByCountry
+            countries.forEach((country, index) => {
+                const legendItem = legend.append("g")
+                    .attr("transform", `translate(0, ${index * 13 + 20})`);
 
-            //     legendItem.append("circle")
-            //         .attr("r", 4)
-            //         .attr("fill", color(country.country));
+                legendItem.append("circle")
+                    .attr("r", 4)
+                    .attr("fill", color(country.country));
 
-            //     legendItem.append("text")
-            //         .text(country.country)
-            //         .attr("x", 10)
-            //         .attr("dy", "0.32em")
-            //         .attr("font-size", "12px");
-            // });
+                legendItem.append("text")
+                    .text(country.country)
+                    .attr("x", 10)
+                    .attr("dy", "0.32em")
+                    .attr("font-size", "12px");
+            });
         },
 
         // Update the chart with filtered data based on the selected date
@@ -468,7 +468,7 @@ const app3 = Vue.createApp({
             });
 
             this.makeChart(date = "2017-11");
-            this.createLegends();
+            // this.createLegends();
         }).catch(error => {
             console.log(error);
         });
