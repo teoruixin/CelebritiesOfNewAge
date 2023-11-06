@@ -86,7 +86,7 @@ function makeChart(data){
         .attr("cx", function(d) { return x(d.AverageEarning); })
         .attr("cy", function(d) { return y(d.viewsDays); })
         .attr("r",function(d){ return 5;})
-        .attr("stroke", "steelblue") 
+        .attr("stroke", "#1f78b4") 
         .attr("stroke-width","1px")
         .on("mouseover", function(event, d){ 
         d3.select(this).transition()
