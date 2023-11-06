@@ -76,7 +76,20 @@ function cat_by_created_year(data) {
     // This one maps Category to a colour.
     const colour = d3.scaleOrdinal()
         .domain(data.map(d => d.category))
-        .range(d3.schemeSet3)
+        .range(d3.schemePaired)
+
+    // create a tooltip
+    var Tooltip = d3.select("#category_by_year")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .style("position", "absolute")
+    .style("width", "auto")
 
     // Add the x-axis.
     graph.append("g")
@@ -111,11 +124,37 @@ function cat_by_created_year(data) {
     graph.selectAll('circle')
         .data(data)
         .join('circle')
-        .attr('opacity', 0.75)
-        .attr('r', 2.5)
+        // .attr('opacity', 0.75)
+        .attr('r', 4)
         .attr('cx', d => xscale(d.year))
         .attr('cy', d => yscale(d.count))
-        .attr('fill', d => colour(d.category));
+        .attr('fill', d => colour(d.category))
+        
+    // Interaction
+    graph.selectAll('circle')
+        .data(data)
+        .on("mouseover", function(event, d){
+            Tooltip
+            .style("opacity", 1)
+            d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)
+            
+        })
+        .on("mousemove", function(event, d){
+            Tooltip
+            .html("<b>Catetory: </b>" + d.category + "<br><b>Year: </b>" + d.year + "<br><b>Count: </b>" + d.count)
+            .style("left", (event.pageX+20) + 'px')
+            .style("top", (event.pageY+20) + 'px')
+        })
+    
+        .on("mouseout", function(event, d){
+            d3.select(this)
+            .style("stroke", "none")
+            Tooltip
+            .style("opacity", 0)
+            
+        })
 
     // Plot lines.
     // 1) Group data
@@ -135,7 +174,7 @@ function cat_by_created_year(data) {
         graph.append("path")
             .attr("class", "line")
             .style("fill","none")
-            .attr('opacity', 0.75)
+            // .attr('opacity', 0.75)
             .style("stroke", colour(catData.category))
             .style("stroke-width", 1.5)
             .attr("d", lineGenerator(catData.data))

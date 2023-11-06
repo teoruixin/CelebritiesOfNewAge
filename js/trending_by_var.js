@@ -57,7 +57,7 @@ const app2 = Vue.createApp({
             // This one maps Category to a colour.
             const colour = d3.scaleOrdinal()
                 .domain(data.map(d => d.category))
-                .range(d3.schemeSet3)
+                .range(d3.schemePaired)
         
             // Add the x-axis.
             graph.append("g")
@@ -198,7 +198,7 @@ const app2 = Vue.createApp({
                     .attr("transform", `translate(0, ${index * 13 + 20})`);
 
                 legendItem.append("circle")
-                    .attr("r", 3.5)
+                    .attr("r", 4)
                     .attr("fill", colour(category));
 
                 legendItem.append("text")

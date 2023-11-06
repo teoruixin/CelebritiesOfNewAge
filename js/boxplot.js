@@ -357,7 +357,7 @@ const app = Vue.createApp({
                     .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
                     .attr("width", boxWidth )
                     .attr("stroke", "black")
-                    .style("fill", "#8dd3c7")
+                    .style("fill", "#a6cee3")
                 // Interaction
                 .on("mouseover", function(event, d){
                 Tooltip

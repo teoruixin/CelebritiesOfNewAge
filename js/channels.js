@@ -633,7 +633,7 @@ const app = Vue.createApp({
     }, // methods
 
     mounted() {
-        var countryColors = d3.scaleOrdinal(d3.schemeSet3);
+        var countryColors = d3.scaleOrdinal(d3.schemePaired);
 
         d3.csv("../data/Global YouTube Statistics.csv", (row, i) => {
             const countriesToInclude = ["United States", "India", "Brazil",

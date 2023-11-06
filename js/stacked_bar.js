@@ -34,7 +34,7 @@ const app3 = Vue.createApp({
             this.curData = data;
 
             // Create a color scale for different countries
-            color = d3.scaleOrdinal(d3.schemeSet3);
+            color = d3.scaleOrdinal(d3.schemePaired);
 
             // Calculate the maximum total count for any Youtuber
             var maxTotalCount = d3.max(data, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0));
@@ -48,12 +48,12 @@ const app3 = Vue.createApp({
             // y position
             y = d3.scaleBand()
                 .domain(data.map(d => d.youtuber))
-                .range([20, chartHeight - 25])
+                .range([20, this.chartHeight - 25])
                 .padding(0.2);
 
             var canvas = d3.select(".chart")
-                .attr("width", this.chartWidth + 20)
-                .attr("height", chartHeight)
+                .attr("width", this.chartWidth + 200)
+                .attr("height", this.chartHeight)
                 .attr("transform", "translate(0," + -10 + ")");
 
             // var data = d3.stack()
@@ -121,7 +121,7 @@ const app3 = Vue.createApp({
 
             var xAxisGroup = canvas.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(0," + (chartHeight - 25) + ")")
+                .attr("transform", "translate(0," + (this.chartHeight - 25) + ")")
                 .call(xAxis)
                 .append("text")
                 .text("Count")
@@ -133,6 +133,35 @@ const app3 = Vue.createApp({
 
             this.xAxis = xAxisGroup;
             this.yAxis = yAxisGroup;
+
+            // Add a legend
+            const legend = canvas.append("g")
+            .attr("transform", `translate(${this.chartWidth +10}, 10)`);
+
+            // Create a legend title
+            legend.append("text")
+                .text("Country")
+                .attr("dy", "0.35em")
+                .attr("font-weight", "bold")
+                .attr("font-size", "14px");
+
+            // Create legend items
+            const countries = data[1].countsByCountry
+            // console.log(data[1].countsByCountry);
+            countries.forEach((country, index) => {
+                const legendItem = legend.append("g")
+                    .attr("transform", `translate(0, ${index * 13 + 20})`);
+
+                legendItem.append("circle")
+                    .attr("r", 4)
+                    .attr("fill", color(country.country));
+
+                legendItem.append("text")
+                    .text(country.country)
+                    .attr("x", 10)
+                    .attr("dy", "0.32em")
+                    .attr("font-size", "12px");
+            });
         },
 
         // Update the chart with filtered data based on the selected date
@@ -158,12 +187,12 @@ const app3 = Vue.createApp({
             // y position
             y = d3.scaleBand()
                 .domain(data.map(d => d.youtuber))
-                .range([20, chartHeight - 25])
+                .range([20, this.chartHeight - 25])
                 .padding(0.2);
 
             var oldY = d3.scaleBand()
                 .domain(this.curData.map(d => d.youtuber))
-                .range([20, chartHeight - 25])
+                .range([20, this.chartHeight - 25])
                 .padding(0.2);
 
             // update axes
@@ -442,7 +471,7 @@ const app3 = Vue.createApp({
             });
 
             this.makeChart(date = "2017-11");
-            this.createLegends(date = "2017-11");
+            // this.createLegends(date = "2017-11");
         }).catch(error => {
             console.log(error);
         });
