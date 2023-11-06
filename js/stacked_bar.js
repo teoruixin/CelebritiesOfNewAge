@@ -451,8 +451,6 @@ const app3 = Vue.createApp({
 })
 const stacked_bar = app3.mount("#app3")
 
-
-
 /******** Create Legends ********/
 function createLegends(data) {
     var legend = d3.select(".legend");

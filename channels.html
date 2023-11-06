@@ -61,7 +61,7 @@
             padding: 20px;
             margin: 10px 40px;
             border: 1px solid slateblue;
-            width: 225px;
+            width: 250px;
         }
 
         .treemap-info {
@@ -70,13 +70,19 @@
             padding: 20px;
             margin: 10px 20px;
             border: 1px solid slateblue;
-            width: 175px;
+            width: 225px;
         }
 
         .treemap-btn {
             position: relative;
             /* float:right; */
             margin: 10px;
+        }
+
+        .info-btn {
+            /* position: relative; */
+            float: right;
+            margin: 3px;
         }
     </style>
 </head>
@@ -121,7 +127,7 @@
 
     <div id="channels">
         <div id="top_channels_div">
-            <h1>Top 5 Countries and the Top 5 YouTubers by Subscribers</h1>
+            <h1>Top Youtubers by Subscribers</h1>
             <div id="top_youtubers_div"></div>
             <div class="legend"></div>
             <div class="info">
@@ -135,8 +141,10 @@
                     <li v-for="(category, idx) in criteria.category"> {{ category }} <span
                             v-on:click="rm_from_list('category', idx, delay=false)">❌</span> </li>
                 </ul>
-                <button type="button" v-on:click="popup(toHide = false)">Edit</button>
-                <button type="button" v-on:click="criteria = { country:[], category:[] }; top_channels_update()">Clear
+                <button type="button" class="btn btn-success btn-sm info-btn"
+                    v-on:click="popup(toHide = false)">Edit</button>
+                <button type="button" class="btn btn-warning btn-sm info-btn"
+                    v-on:click="criteria = { country:[], category:[] }; top_channels_update()">Clear
                     All</button>
             </div>
         </div>
@@ -144,6 +152,20 @@
         <div id="popup_bg" style="display: none;">
             <div id="treemaps_div">
                 <div class="treemap-info">
+                    Showing {{cur_treemap}}
+                    <button type="button" class="btn btn-danger btn-sm info-btn" v-on:click="popup(toHide = true)">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm info-btn"
+                        v-on:click="criteria = { country:[], category:[] }">
+                        Clear All
+                    </button>
+                    <br />
+                    <button type="button" class="btn btn-dark btn-sm treemap-btn info-btn"
+                        v-on:click="change_treemap()">
+                        Show {{ cur_treemap == "Countries" ? "Categories" : "Countries" }}
+                    </button>
+
                     Countries: <span v-if="criteria.country.length == 0">Showing All...</span>
                     <ul>
                         <li v-for="(country, idx) in criteria.country"> {{ country }} <span
@@ -155,23 +177,13 @@
                                 v-on:click="rm_from_list('category', idx, delay=true)">❌</span> </li>
                     </ul>
 
-                    <button type="button" v-on:click="popup(toHide = true)">
-                        Hide
-                    </button>
-                    <button type="button" v-on:click="criteria = { country:[], category:[] }">Clear All</button>
                 </div>
                 <div id="treemap_countries">
-                    <h1>Total Number of Top YouTubers per Country </h1>
-                    <button type="button" class="treemap-btn" v-on:click="change_treemap(target = 'category')">
-                        Change to Category
-                    </button>
+                    <h1>Top YouTubers per Country </h1>
                 </div>
 
                 <div id="treemap_categories" style="display: none;">
-                    <h1>Total Number of Top YouTubers per Category </h1>
-                    <button type="button" class="treemap-btn" v-on:click="change_treemap(target = 'country')">
-                        Change to Country
-                    </button>
+                    <h1>Top YouTubers per Category </h1>
                 </div>
             </div>
         </div>

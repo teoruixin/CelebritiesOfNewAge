@@ -29,7 +29,8 @@ const app = Vue.createApp({
                 marginRight: 10,
                 marginBottom: 10,
                 marginLeft: 10
-            }
+            },
+            cur_treemap: "Countries"
         }
     }, // /data
     methods: {
@@ -42,14 +43,17 @@ const app = Vue.createApp({
             document.getElementById("popup_bg").style.display = "block";
             return
         },
-        change_treemap(target) {     // contains this.top_channels_update
+        change_treemap() {     // contains this.top_channels_update
+            var target = this.cur_treemap == "Countries" ? "category" : "country"
             if (target == "country") {
                 document.getElementById("treemap_categories").style.display = "none";
                 document.getElementById("treemap_countries").style.display = "block";
+                this.cur_treemap = "Countries";
                 return
             }
             document.getElementById("treemap_countries").style.display = "none";
             document.getElementById("treemap_categories").style.display = "block";
+            this.cur_treemap = "Categories";
             return
         },
         rm_from_list(target, idx, delay) {
