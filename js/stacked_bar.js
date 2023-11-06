@@ -20,6 +20,10 @@ const app3 = Vue.createApp({
             countryColorMap: { "CA": null, "DE": null, "FR": null, "GB": null, "IN": null, "JP": null, "MX": null, "US": null, "RU": null, "KR": null },
             chartWidth: 800,
             chartHeight: 400,
+            marginTop: 10,
+            marginRight: 25,
+            marginBottom: 20,
+            marginLeft: 120,
             selectedDate: null,
             curData: null,
             allData: null,
@@ -41,16 +45,16 @@ const app3 = Vue.createApp({
             x = d3.scaleLinear()
                 .domain([0, maxTotalCount])
                 .nice()
-                .range([120, this.chartWidth - 40]);
+                .range([this.marginLeft, this.chartWidth - 20]);
 
             // y position
             y = d3.scaleBand()
                 .domain(data.map(d => d.youtuber))
-                .range([20, this.chartHeight - 25])
+                .range([this.marginBottom, this.chartHeight - 25])
                 .padding(0.2);
 
             var canvas = d3.select(".chart")
-                .attr("width", this.chartWidth + 200)
+                .attr("width", this.chartWidth)
                 .attr("height", this.chartHeight)
                 .attr("transform", "translate(0," + -10 + ")");
 
@@ -78,7 +82,7 @@ const app3 = Vue.createApp({
                         .attr("fill", this.countryColorMap[countByCountry.country])
                         .attr("x", x(totalCount))
                         .attr("y", y(row.youtuber))
-                        .attr("width", x(countByCountry.count) - 120)
+                        .attr("width", x(countByCountry.count) - this.marginLeft)
                         .attr("height", y.bandwidth());
 
                     totalCount += countByCountry.count;
@@ -145,7 +149,6 @@ const app3 = Vue.createApp({
 
             // Create legend items
             // const countries = data[1].countsByCountry
-            // // console.log(data[1].countsByCountry);
             // countries.forEach((country, index) => {
             //     const legendItem = legend.append("g")
             //         .attr("transform", `translate(0, ${index * 13 + 20})`);
@@ -164,7 +167,7 @@ const app3 = Vue.createApp({
 
         // Update the chart with filtered data based on the selected date
         updateChart(date) {
-            const transition_time = 2500;
+            const transition_time = 1000;
             // var tgtDate = this.selectedDate;
             var data = this.allData.get(date);
 
@@ -175,12 +178,12 @@ const app3 = Vue.createApp({
             x = d3.scaleLinear()
                 .domain([0, maxTotalCount])
                 .nice()
-                .range([120, this.chartWidth - 40]);
+                .range([this.marginLeft, this.chartWidth - this.marginRight]);
 
             var oldX = d3.scaleLinear()
                 .domain([0, d3.max(this.curData, d => d.countsByCountry.reduce((acc, curr) => acc + curr.count, 0))])
                 .nice()
-                .range([120, this.chartWidth - 40]);
+                .range([this.marginLeft, this.chartWidth - this.marginRight]);
 
             // y position
             y = d3.scaleBand()
@@ -248,9 +251,6 @@ const app3 = Vue.createApp({
                     toRem.set(key = idx, value = channel)
                 }
             }
-            console.log("toAdd", toAdd);
-            console.log("toUpd", toUpd);
-            console.log("toRem", toRem);
 
             d3.select('.chart')
                 .selectAll("rect")
@@ -270,7 +270,7 @@ const app3 = Vue.createApp({
                         .attr("x", x(totalCount))
                         // .attr("y", y(row.youtuber))
                         .attr("y", this.chartHeight)
-                        .attr("width", x(countByCountry.count) - 120)
+                        .attr("width", x(countByCountry.count) - this.marginLeft)
                         .attr("height", y.bandwidth())
                         .attr("opacity", 0)
                         .transition()
@@ -303,9 +303,7 @@ const app3 = Vue.createApp({
                 for (let oldCountry of oldCountryList) {
                     oldCountryIdx = curCountryList.findIndex(e => e.country === oldCountry.country);
                     if (oldCountryIdx < 0) {
-                        console.log("insert:", oldCountry, oldCountryIdx)
                         curCountryList.splice(idx, 0, { country: oldCountry.country, count: 0 })
-                        console.log(curCountryList)
                     }
                     idx++;
                 }
@@ -325,7 +323,7 @@ const app3 = Vue.createApp({
                         .attr("fill", this.countryColorMap[curCountry])
                         .attr("x", oldX(totalCountOld))
                         .attr("y", oldY(row.youtuber))
-                        .attr("width", oldX(oldCount) - 120)
+                        .attr("width", oldX(oldCount) - this.marginLeft)
                         .attr("height", y.bandwidth())
                         .attr("opacity", 1)
                         // transition to new chart
@@ -333,7 +331,7 @@ const app3 = Vue.createApp({
                         .duration(transition_time)
                         .attr("x", x(totalCountNew))
                         .attr("y", y(row.youtuber))
-                        .attr("width", x(countByCountry.count) - 120)
+                        .attr("width", x(countByCountry.count) - this.marginLeft)
                         .attr("opacity", 1);
 
                     totalCountNew += countByCountry.count;
@@ -354,7 +352,7 @@ const app3 = Vue.createApp({
                         .attr("x", oldX(totalCount))
                         .attr("y", oldY(row.youtuber))
                         // .attr("y", this.chartHeight)
-                        .attr("width", oldX(countByCountry.count) - 120)
+                        .attr("width", oldX(countByCountry.count) - this.marginLeft)
                         .attr("height", y.bandwidth())
                         .attr("opacity", 1)
                         .transition()
