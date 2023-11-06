@@ -143,7 +143,7 @@ const app = Vue.createApp({
         getLateData(country, month, type){
             categories= this.categories
 
-            d3.csv("data/trending_2020/"+ country + ".csv", (row, i) => {
+            d3.csv("data/trending_2022/"+ country + ".csv", (row, i) => {
                 if (type=="Views"){
                     return {
                         category: row.category,
