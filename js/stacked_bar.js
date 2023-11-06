@@ -403,7 +403,7 @@ const app3 = Vue.createApp({
     },
 
     created() {
-        color = d3.scaleOrdinal(d3.schemeSet3);
+        color = d3.scaleOrdinal(d3.schemePaired);
         for (let [c, val] of Object.entries(this.countryColorMap)) {
             this.countryColorMap[c] = color(c)
         }

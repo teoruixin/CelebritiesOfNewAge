@@ -633,7 +633,7 @@ const app = Vue.createApp({
     }, // methods
 
     mounted() {
-        const color = d3.scaleOrdinal(d3.schemeSet3);
+        const color = d3.scaleOrdinal(d3.schemePaired);
         for (let [c, val] of Object.entries(this.countryColorMap)) {
             this.countryColorMap[c] = color(c);
             this.legendColorMap.push([c, color(c)]);
