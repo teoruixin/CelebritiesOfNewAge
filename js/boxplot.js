@@ -233,12 +233,17 @@ const app = Vue.createApp({
                 .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")");
             
+            let displayYear = year;
+            if (year < 2019) {
+                displayYear = month == "November" || month == "December" ? 2017 : 2018;
+            }
+
             svg
             .append("text")
             .attr("class", "legendTitle")
             .attr("x", chartWidth/2 - 200)
             .attr("y", -20)
-            .text(this.type + " (Log) by Category in " + country + " in " + month + " " + year)
+            .text(this.type + " (Log) by Category in " + country + " in " + month + " " + displayYear)
             .style("font-weight", "bold");
         
             // create a tooltip
