@@ -96,7 +96,7 @@ const app = Vue.createApp({
             // Generate legend data for top 20 countries
             var legend_data_top = this.legendColorMap.filter(entry => countries.indexOf(entry[0]) != -1 || entry[0] == "Others")
 
-            d3.select(".legend").text("Countries");
+            d3.select(".legend").text("Countries").style("font-weight", "bold");
 
             // // Display the legend
             var legend = d3.select(".legend")
@@ -118,6 +118,7 @@ const app = Vue.createApp({
 
             legend.append("span")
                 .attr("class", "legend-text")
+                .style("font-weight", "normal")
                 .text((d) => d[0]);
         }, // generate_legend
 
