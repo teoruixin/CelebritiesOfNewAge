@@ -75,28 +75,34 @@ const app = Vue.createApp({
         getEarlyData(country, month, type){
             categories= this.categories
             
-            d3.csv("data/trending_2018/" + country + ".csv", (row, i) => {
+            d3.csv("data/trending_stats/" + country + "_early.csv", (row, i) => {
                 if (type=="Views"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.views,
-                        log: +row.views > 0 ? Math.log10(+row.views) : 0,
-                        month: this.months[Number(row.trending_date.slice(-2))-1],
-                        year: Number(row.trending_date.slice(0,2)),
+                        // title: row.title,
+                        // channel: row.channel_title,
+                        // value: +row.views,
+                        min: +row.views_min > 0 ? Math.log10(+row.views_min) : 0,
+                        q1: +row.views_q1 > 0 ? Math.log10(+row.views_q1) : 0,
+                        median: +row.views_median > 0 ? Math.log10(+row.views_median) : 0,
+                        q3: +row.views_q3 > 0 ? Math.log10(+row.views_q3) : 0,
+                        max: +row.views_max > 0 ? Math.log10(+row.views_max) : 0,
+                        // log: +row.views > 0 ? Math.log10(+row.views) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
                 else if (type=="Likes"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.likes,
-                        log: +row.likes > 0 ? Math.log10(+row.likes) : 0,
-                        month: this.months[Number(row.trending_date.slice(-2))-1],
-                        year: Number(row.trending_date.slice(0,2)),
+                        min: +row.likes_min > 0 ? Math.log10(+row.likes_min) : 0,
+                        q1: +row.likes_q1 > 0 ? Math.log10(+row.likes_q1) : 0,
+                        median: +row.likes_median > 0 ? Math.log10(+row.likes_median) : 0,
+                        q3: +row.likes_q3 > 0 ? Math.log10(+row.likes_q3) : 0,
+                        max: +row.likes_max > 0 ? Math.log10(+row.likes_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -104,12 +110,13 @@ const app = Vue.createApp({
                 else if (type=="Dislikes"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.dislikes,
-                        log: +row.dislikes > 0 ? Math.log10(+row.dislikes) : 0,
-                        month: this.months[Number(row.trending_date.slice(-2))-1],
-                        year: Number(row.trending_date.slice(0,2)),
+                        min: +row.dislikes_min > 0 ? Math.log10(+row.dislikes_min) : 0,
+                        q1: +row.dislikes_q1 > 0 ? Math.log10(+row.dislikes_q1) : 0,
+                        median: +row.dislikes_median > 0 ? Math.log10(+row.dislikes_median) : 0,
+                        q3: +row.dislikes_q3 > 0 ? Math.log10(+row.dislikes_q3) : 0,
+                        max: +row.dislikes_max > 0 ? Math.log10(+row.dislikes_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -117,12 +124,13 @@ const app = Vue.createApp({
                 else if (type=="Comments"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.comment_count,
-                        log: +row.comment_count > 0 ? Math.log10(+row.comment_count) : 0,
-                        month: this.months[Number(row.trending_date.slice(-2))-1],
-                        year: Number(row.trending_date.slice(0,2)),
+                        min: +row.comment_count_min > 0 ? Math.log10(+row.comment_count_min) : 0,
+                        q1: +row.comment_count_q1 > 0 ? Math.log10(+row.comment_count_q1) : 0,
+                        median: +row.comment_count_median > 0 ? Math.log10(+row.comment_count_median) : 0,
+                        q3: +row.comment_count_q3 > 0 ? Math.log10(+row.comment_count_q3) : 0,
+                        max: +row.comment_count_max > 0 ? Math.log10(+row.comment_count_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -130,8 +138,8 @@ const app = Vue.createApp({
             }).then(rows => {
                 // console.log(rows);
                 rows = rows.filter(function(d) { return categories.includes(d.category);})
-                rows = rows.filter(function(d) { return d.month == month && d.year == 18; })
-                rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
+                rows = rows.filter(function(d) { return d.month == month && d.year == 2018; })
+                // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
                 
                 this.makeChart(rows, country, month, "2018", "early")
@@ -144,29 +152,30 @@ const app = Vue.createApp({
         getLateData(country, month, type){
             categories= this.categories
 
-            d3.csv("data/trending_2022/"+ country + ".csv", (row, i) => {
+            d3.csv("data/trending_stats/" + country + "_late.csv", (row, i) => {
                 if (type=="Views"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.views,
-                        log: +row.views > 0 ? Math.log10(+row.views) : 0,
-                        month: this.months[Number(row.trending_date.slice(5,7))-1],
-                        year: Number(row.trending_date.slice(0,4)),
+                        min: +row.views_min > 0 ? Math.log10(+row.views_min) : 0,
+                        q1: +row.views_q1 > 0 ? Math.log10(+row.views_q1) : 0,
+                        median: +row.views_median > 0 ? Math.log10(+row.views_median) : 0,
+                        q3: +row.views_q3 > 0 ? Math.log10(+row.views_q3) : 0,
+                        max: +row.views_max > 0 ? Math.log10(+row.views_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
-
                 else if (type=="Likes"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.likes,
-                        log: +row.likes > 0 ? Math.log10(+row.likes) : 0,
-                        month: this.months[Number(row.trending_date.slice(5,7))-1],
-                        year: Number(row.trending_date.slice(0,4)),
+                        min: +row.likes_min > 0 ? Math.log10(+row.likes_min) : 0,
+                        q1: +row.likes_q1 > 0 ? Math.log10(+row.likes_q1) : 0,
+                        median: +row.likes_median > 0 ? Math.log10(+row.likes_median) : 0,
+                        q3: +row.likes_q3 > 0 ? Math.log10(+row.likes_q3) : 0,
+                        max: +row.likes_max > 0 ? Math.log10(+row.likes_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -174,12 +183,13 @@ const app = Vue.createApp({
                 else if (type=="Dislikes"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.dislikes,
-                        log: +row.dislikes > 0 ? Math.log10(+row.dislikes) : 0,
-                        month: this.months[Number(row.trending_date.slice(5,7))-1],
-                        year: Number(row.trending_date.slice(0,4)),
+                        min: +row.dislikes_min > 0 ? Math.log10(+row.dislikes_min) : 0,
+                        q1: +row.dislikes_q1 > 0 ? Math.log10(+row.dislikes_q1) : 0,
+                        median: +row.dislikes_median > 0 ? Math.log10(+row.dislikes_median) : 0,
+                        q3: +row.dislikes_q3 > 0 ? Math.log10(+row.dislikes_q3) : 0,
+                        max: +row.dislikes_max > 0 ? Math.log10(+row.dislikes_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -187,12 +197,13 @@ const app = Vue.createApp({
                 else if (type=="Comments"){
                     return {
                         category: row.category,
-                        title: row.title,
-                        channel: row.channel_title,
-                        value: +row.comment_count,
-                        log: +row.comment_count > 0 ? Math.log10(+row.comment_count) : 0,
-                        month: this.months[Number(row.trending_date.slice(5,7))-1],
-                        year: Number(row.trending_date.slice(0,4)),
+                        min: +row.comment_count_min > 0 ? Math.log10(+row.comment_count_min) : 0,
+                        q1: +row.comment_count_q1 > 0 ? Math.log10(+row.comment_count_q1) : 0,
+                        median: +row.comment_count_median > 0 ? Math.log10(+row.comment_count_median) : 0,
+                        q3: +row.comment_count_q3 > 0 ? Math.log10(+row.comment_count_q3) : 0,
+                        max: +row.comment_count_max > 0 ? Math.log10(+row.comment_count_max) : 0,
+                        month: this.months[Number(row.month.slice(-2))-1],
+                        year: Number(row.month.slice(0,4)),
                         key: i
                     };
                 }
@@ -201,7 +212,7 @@ const app = Vue.createApp({
                 // console.log(rows);
                 rows = rows.filter(function(d) { return categories.includes(d.category);})
                 rows = rows.filter(function(d) { return d.month == month && d.year == 2022; })
-                rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
+                // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
                 this.makeChart(rows, country, month, "2022", "late")
                 
@@ -245,18 +256,19 @@ const app = Vue.createApp({
         
             boxWidth = 30
         
-            stats = d3.rollup(data, function(d) {
-                q1 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.25)
-                median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
-                q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
-                interQuantileRange = q3 - q1
+            // stats = d3.rollup(data, function(d) {
+                // q1 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.25)
+                // median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
+                // q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
+                // interQuantileRange = q3 - q1
                 // min = q1 - 1.5 * interQuantileRange
                 // max = q3 + 1.5 * interQuantileRange
-                min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
-            }, d => d.category)
-            console.log(stats)
+                // min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                // max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                // console.log(d)
+            //     return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
+            // }, d => d.category)
+            // console.log(data)
         
             //   Show the X scale
             x = d3.scaleBand()
@@ -310,52 +322,52 @@ const app = Vue.createApp({
             // // Show the main vertical line
             svg
                 .selectAll(".vertLines")
-                .data(stats)
+                .data(data)
                 .enter()
                 .append("line")
                     .attr("class", "vertLines")
-                    .attr("x1", function(d){return(x(d[0]))})
-                    .attr("x2", function(d){return(x(d[0]))})
-                    .attr("y1", function(d){return(y(d[1].min))})
-                    .attr("y2", function(d){return(y(d[1].max))})
+                    .attr("x1", function(d){return(x(d.category))})
+                    .attr("x2", function(d){return(x(d.category))})
+                    .attr("y1", function(d){return(y(d.min))})
+                    .attr("y2", function(d){return(y(d.max))})
                     .attr("stroke", "black")
                     .style("width", 40)
         
             // Show max line
             svg
                 .selectAll("maxLines")
-                .data(stats)
+                .data(data)
                 .enter()
                 .append("line")
-                    .attr("x1", function(d){return(x(d[0])-boxWidth/2)})
-                    .attr("x2", function(d){return(x(d[0])+boxWidth/2)})
-                    .attr("y1", function(d){return(y(d[1].max))})
-                    .attr("y2", function(d){return(y(d[1].max))})
+                    .attr("x1", function(d){return(x(d.category)-boxWidth/2)})
+                    .attr("x2", function(d){return(x(d.category)+boxWidth/2)})
+                    .attr("y1", function(d){return(y(d.max))})
+                    .attr("y2", function(d){return(y(d.max))})
                     .attr("stroke", "black")
                     .style("width", 80)
         
             // Show min line
             svg
                 .selectAll("minLines")
-                .data(stats)
+                .data(data)
                 .enter()
                 .append("line")
-                    .attr("x1", function(d){return(x(d[0])-boxWidth/2) })
-                    .attr("x2", function(d){return(x(d[0])+boxWidth/2) })
-                    .attr("y1", function(d){return(y(d[1].min))})
-                    .attr("y2", function(d){return(y(d[1].min))})
+                    .attr("x1", function(d){return(x(d.category)-boxWidth/2) })
+                    .attr("x2", function(d){return(x(d.category)+boxWidth/2) })
+                    .attr("y1", function(d){return(y(d.min))})
+                    .attr("y2", function(d){return(y(d.min))})
                     .attr("stroke", "black")
                     .style("width", 80)
         
             // rectangle for the main box    
             svg
                 .selectAll("boxes")
-                .data(stats)
+                .data(data)
                 .enter()
                 .append("rect")
-                    .attr("x", function(d){return(x(d[0])-boxWidth/2)})
-                    .attr("y", function(d){return(y(d[1].q3))})
-                    .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
+                    .attr("x", function(d){return(x(d.category)-boxWidth/2)})
+                    .attr("y", function(d){return(y(d.q3))})
+                    .attr("height", function(d){return(y(d.q1)-y(d.q3))})
                     .attr("width", boxWidth )
                     .attr("stroke", "black")
                     .style("fill", "#a6cee3")
@@ -370,7 +382,7 @@ const app = Vue.createApp({
                 })
                 .on("mousemove", function(event, d){
                     Tooltip
-                    .html("<b>Max: </b>" + d[1].max.toFixed(2) +"<br><b>Min: </b>" + d[1].min.toFixed(2) + "<br><b>Q1: </b>" + d[1].q1.toFixed(2) + "<br><b>Median: </b>" + d[1].median.toFixed(2) + "<br><b>Q3: </b>" + d[1].q3.toFixed(2))
+                    .html("<b>Max: </b>" + d.max.toFixed(2) +"<br><b>Min: </b>" + d.min.toFixed(2) + "<br><b>Q1: </b>" + d.q1.toFixed(2) + "<br><b>Median: </b>" + d.median.toFixed(2) + "<br><b>Q3: </b>" + d.q3.toFixed(2))
                     .style("left", (event.pageX+20) + 'px')
                     .style("top", (event.pageY+20) + 'px')
                 })
@@ -383,13 +395,13 @@ const app = Vue.createApp({
             // // Show the median
             svg
                 .selectAll("medianLines")
-                .data(stats)
+                .data(data)
                 .enter()
                 .append("line")
-                    .attr("x1", function(d){return(x(d[0])-boxWidth/2) })
-                    .attr("x2", function(d){return(x(d[0])+boxWidth/2) })
-                    .attr("y1", function(d){return(y(d[1].median))})
-                    .attr("y2", function(d){return(y(d[1].median))})
+                    .attr("x1", function(d){return(x(d.category)-boxWidth/2) })
+                    .attr("x2", function(d){return(x(d.category)+boxWidth/2) })
+                    .attr("y1", function(d){return(y(d.median))})
+                    .attr("y2", function(d){return(y(d.median))})
                     .attr("stroke", "black")
                     .style("width", 80)
         
@@ -430,19 +442,20 @@ const app = Vue.createApp({
         },
 
         update(data, country, month, year, period){
-            stats = d3.rollup(data, function(d) {
-                q1 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.25)
-                median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
-                q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
-                interQuantileRange = q3 - q1
+            // stats = d3.rollup(data, function(d) {
+                // q1 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.25)
+                // median = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.5)
+                // q3 = d3.quantile(d.map(function(g) { return g.log;}).sort(d3.ascending),.75)
+                // interQuantileRange = q3 - q1
                 // min = q1 - 1.5 * interQuantileRange
                 // max = q3 + 1.5 * interQuantileRange
 
-                min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
-                return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
-            }, d => d.category)
-            console.log(stats)
+                // min = d3.min(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                // max = d3.max(d.map(function(g) { return g.log;}).sort(d3.ascending))
+                // console.log(d)
+            //     return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
+            // }, d => d.category)
+            // console.log(stats)
         
             var svg = d3.selectAll("#boxplot").select("." + period)
         
@@ -490,41 +503,41 @@ const app = Vue.createApp({
             .select(".yaxisTitle").text(this.type +  " (Log)")
         
             // Show the main vertical line
-            var lines = svg.selectAll("line").data(stats, key)
+            var lines = svg.selectAll("line").data(data, key)
             lines.exit().transition().duration(1000)
                 .attr("width", 0)
                 .attr("opacity", 0)
                 .remove()
             lines.enter().append("line")
-                .attr("x1", function(d){return(x(d[0])+ margin.left)})
-                .attr("x2", function(d){return(x(d[0]) + margin.left)})
-                .attr("y1", function(d){return(y(d[1].min))})
-                .attr("y2", function(d){return(y(d[1].max))})
+                .attr("x1", function(d){return(x(d.category)+ margin.left)})
+                .attr("x2", function(d){return(x(d.category) + margin.left)})
+                .attr("y1", function(d){return(y(d.min))})
+                .attr("y2", function(d){return(y(d.max))})
                 .attr("stroke", "black")
                 .style("width", 40)
         
             // Show max line
             lines.enter().append("line")
-                .attr("x1", function(d){return(x(d[0])-boxWidth/2 + margin.left)})
-                .attr("x2", function(d){return(x(d[0])+boxWidth/2 + margin.left)})
-                .attr("y1", function(d){return(y(d[1].max))})
-                .attr("y2", function(d){return(y(d[1].max))})
+                .attr("x1", function(d){return(x(d.category)-boxWidth/2 + margin.left)})
+                .attr("x2", function(d){return(x(d.category)+boxWidth/2 + margin.left)})
+                .attr("y1", function(d){return(y(d.max))})
+                .attr("y2", function(d){return(y(d.max))})
                 .attr("stroke", "black")
                 .style("width", 80)
         
             // // Show min line
             lines.enter().append("line")
-                .attr("x1", function(d){return(x(d[0])-boxWidth/2 + margin.left) })
-                .attr("x2", function(d){return(x(d[0])+boxWidth/2 + margin.left) })
-                .attr("y1", function(d){return(y(d[1].min))})
-                .attr("y2", function(d){return(y(d[1].min))})
+                .attr("x1", function(d){return(x(d.category)-boxWidth/2 + margin.left) })
+                .attr("x2", function(d){return(x(d.category)+boxWidth/2 + margin.left) })
+                .attr("y1", function(d){return(y(d.min))})
+                .attr("y2", function(d){return(y(d.min))})
                 .attr("stroke", "black")
                 .style("width", 80)
         
             // Update box
             svg.selectAll("rect").remove()
             
-            var boxes = svg.selectAll("rect").data(stats, key)
+            var boxes = svg.selectAll("rect").data(data, key)
             boxes.exit().transition().duration(1000)
                 .attr("height", 0)
                 .attr("width", 0)
@@ -532,9 +545,9 @@ const app = Vue.createApp({
                 .remove()
         
             boxes.enter().append("rect")
-                .attr("x", function(d){return(x(d[0])-boxWidth/2 + margin.left)})
-                .attr("y", function(d){return(y(d[1].q3))})
-                .attr("height", function(d){return(y(d[1].q1)-y(d[1].q3))})
+                .attr("x", function(d){return(x(d.category)-boxWidth/2 + margin.left)})
+                .attr("y", function(d){return(y(d.q3))})
+                .attr("height", function(d){return(y(d.q1)-y(d.q3))})
                 .attr("width", boxWidth )
                 .attr("stroke", "black")
                 .attr("fill", "#a6cee3")
@@ -549,7 +562,7 @@ const app = Vue.createApp({
                 })
                 .on("mousemove", function(event, d){
                     Tooltip
-                    .html("<b>Max: </b>" + d[1].max.toFixed(2) +"<br><b>Min: </b>" + d[1].min.toFixed(2) + "<br><b>Q1: </b>" + d[1].q1.toFixed(2) + "<br><b>Median: </b>" + d[1].median.toFixed(2) + "<br><b>Q3: </b>" + d[1].q3.toFixed(2))
+                    .html("<b>Max: </b>" + d.max.toFixed(2) +"<br><b>Min: </b>" + d.min.toFixed(2) + "<br><b>Q1: </b>" + d.q1.toFixed(2) + "<br><b>Median: </b>" + d.median.toFixed(2) + "<br><b>Q3: </b>" + d.q3.toFixed(2))
                     .style("left", (event.pageX+20) + 'px')
                     .style("top", (event.pageY+20) + 'px')
                 })
@@ -561,10 +574,10 @@ const app = Vue.createApp({
         
             // Show the median
             lines.enter().append("line")
-                .attr("x1", function(d){return(x(d[0])-boxWidth/2 + margin.left) })
-                .attr("x2", function(d){return(x(d[0])+boxWidth/2 + margin.left) })
-                .attr("y1", function(d){return(y(d[1].median))})
-                .attr("y2", function(d){return(y(d[1].median))})
+                .attr("x1", function(d){return(x(d.category)-boxWidth/2 + margin.left) })
+                .attr("x2", function(d){return(x(d.category)+boxWidth/2 + margin.left) })
+                .attr("y1", function(d){return(y(d.median))})
+                .attr("y2", function(d){return(y(d.median))})
                 .attr("stroke", "black")
                 .style("width", 80)
         
@@ -612,15 +625,16 @@ const app = Vue.createApp({
     created() {
         categories= this.categories
 
-        d3.csv("data/trending_2018/US.csv", (row, i) => {
+        d3.csv("data/trending_stats/US_early.csv", (row, i) => {
             return {
                 category: row.category,
-                title: row.title,
-                channel: row.channel_title,
-                value: +row.views,
-                log: +row.views > 0 ? Math.log10(+row.views) : 0,
-                month: this.months[Number(row.trending_date.slice(-2))-1],
-                year: Number(row.trending_date.slice(0,2)),
+                min: +row.views_min > 0 ? Math.log10(+row.views_min) : 0,
+                q1: +row.views_q1 > 0 ? Math.log10(+row.views_q1) : 0,
+                median: +row.views_median > 0 ? Math.log10(+row.views_median) : 0,
+                q3: +row.views_q3 > 0 ? Math.log10(+row.views_q3) : 0,
+                max: +row.views_max > 0 ? Math.log10(+row.views_max) : 0,
+                month: this.months[Number(row.month.slice(-2))-1],
+                year: Number(row.month.slice(0,4)),
                 key: i
             };
         }).then(rows => {
@@ -633,30 +647,32 @@ const app = Vue.createApp({
                 }
             }
             rows = rows.filter(function(d) { return categories.includes(d.category);})
-            rows = rows.filter(function(d) { return d.month == 'May' && d.year == 18; })
-            rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
+            rows = rows.filter(function(d) { return d.month == 'May' && d.year == '2018'; })
+            // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
             rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
-            this.makeChart(rows, "US", "May", "2018", "early")
             // console.log(rows);
+            this.makeChart(rows, "US", "May", "2018", "early")
+            
         }).catch(error => {
             console.log(error);
         });
 
-        d3.csv("data/trending_2022/US.csv", (row, i) => {
+        d3.csv("data/trending_stats/US_late.csv", (row, i) => {
             return {
                 category: row.category,
-                title: row.title,
-                channel: row.channel_title,
-                value: +row.views,
-                log: +row.views > 0 ? Math.log10(+row.views) : 0,
-                month: Number(row.trending_date.slice(5,7)),
-                year: Number(row.trending_date.slice(0,4)),
+                min: +row.views_min > 0 ? Math.log10(+row.views_min) : 0,
+                q1: +row.views_q1 > 0 ? Math.log10(+row.views_q1) : 0,
+                median: +row.views_median > 0 ? Math.log10(+row.views_median) : 0,
+                q3: +row.views_q3 > 0 ? Math.log10(+row.views_q3) : 0,
+                max: +row.views_max > 0 ? Math.log10(+row.views_max) : 0,
+                month: this.months[Number(row.month.slice(-2))-1],
+                year: Number(row.month.slice(0,4)),
                 key: i
             };
         }).then(rows => {
             rows = rows.filter(function(d) { return categories.includes(d.category);})
-            rows = rows.filter(function(d) { return d.month == 5 && d.year == 2022; })
-            rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
+            rows = rows.filter(function(d) { return d.month == 'May' && d.year == '2022'; })
+            // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
             rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
             this.makeChart(rows, "US", "May", "2022", "late")
             // console.log(rows);
