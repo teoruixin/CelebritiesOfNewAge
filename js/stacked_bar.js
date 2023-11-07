@@ -138,7 +138,14 @@ const app3 = Vue.createApp({
                 .attr("font-size", "14px");
 
             // Create legend items
-            const countries = data[1].countsByCountry
+
+            var countries = [];
+            for (let [country, count] of Object.entries(this.countryColorMap)) {
+                countries.push({country: country, count: count})
+            }
+            
+            // const countries = data[1].countsByCountry
+            // console.log(countries) // [{ country: "CA", count: 15 }]
             countries.forEach((country, index) => {
                 const legendItem = legend.append("g")
                     .attr("transform", `translate(0, ${index * 13 + 20})`);
