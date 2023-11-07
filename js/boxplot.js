@@ -138,7 +138,7 @@ const app = Vue.createApp({
             }).then(rows => {
                 // console.log(rows);
                 rows = rows.filter(function(d) { return categories.includes(d.category);})
-                rows = rows.filter(function(d) { return d.month == month && d.year == 2018; })
+                rows = rows.filter(function(d) { return d.month == month; })
                 // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
                 rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
                 
@@ -652,10 +652,10 @@ const app = Vue.createApp({
                 }
             }
             rows = rows.filter(function(d) { return categories.includes(d.category);})
-            rows = rows.filter(function(d) { return d.month == 'May' && d.year == '2018'; })
+            rows = rows.filter(function(d) { return d.month == 'May'; })
             // rows = rows.filter((v, i, a) => a.findLastIndex(v2=>(v2.title === v.title))===i)
             rows.sort(function(a,b) { return (a.category).localeCompare(b.category); });
-            // console.log(rows);
+            console.log(rows);
             this.makeChart(rows, "US", "May", "2018", "early")
             
         }).catch(error => {
